@@ -18,3 +18,9 @@ var (
 	ErrTransformArgs    = errors.New("wrong number of arguments for this transform function")
 	ErrTransformSyntax  = errors.New("malformed transform: expected name(numbers)")
 )
+
+// Errors returned by ParseNumber and ParsePoints.
+var (
+	ErrUnitInAttribute = errors.New("units aren't supported in shape attributes: give plain numbers in user units (Inkscape: Path → Object to Path)")
+	ErrOddCoordinates  = errors.New("points must come in x,y pairs, but there is an odd number of coordinates")
+)
