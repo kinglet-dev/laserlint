@@ -40,6 +40,9 @@ func ReadLimited(r io.Reader, limits Limits) (design.Design, error) {
 	w := &walker{limits: limits}
 	for {
 		tok, err := dec.Token()
+		if errors.Is(err, io.EOF) && w.elements == 0 {
+			return design.Design{}, fmt.Errorf("%w: it has no elements", ErrNotSVG)
+		}
 		if errors.Is(err, io.EOF) {
 			return w.design, nil
 		}

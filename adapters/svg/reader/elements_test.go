@@ -48,6 +48,18 @@ var _ = Describe("Read with namespaces", func() {
 		Expect(err).To(MatchError(ContainSubstring("<html>")))
 	})
 
+	DescribeTable("refuses a file with no elements at all",
+		func(doc string) {
+			// Act
+			_, err := read(doc)
+
+			// Assert
+			Expect(err).To(MatchError(reader.ErrNotSVG))
+		},
+		Entry("an empty file", ""),
+		Entry("plain text", "hello"),
+	)
+
 	It("reports broken XML inside a skipped element", func() {
 		// Act
 		_, err := read(svg(mm96, `<defs><path></defs>`))
