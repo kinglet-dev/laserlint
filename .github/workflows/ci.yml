@@ -58,3 +58,4 @@ jobs:
           go test ./domain/units -run '^$' -fuzz=FuzzParseLength -fuzztime=30s
           go test ./adapters/svg/syntax -run '^$' -fuzz=FuzzParsePath -fuzztime=30s
           go test ./adapters/svg/syntax -run '^$' -fuzz=FuzzParseTransform -fuzztime=30s
+          go test ./adapters/svg/reader -run '^$' -fuzz=FuzzRead -fuzztime=30s
