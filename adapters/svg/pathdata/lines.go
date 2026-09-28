@@ -9,6 +9,7 @@ func moveTo(st *state, s *scanner, rel bool) error {
 	}
 	st.current, st.start = p, p
 	st.path.Subpaths = append(st.path.Subpaths, geom.Subpath{Start: p})
+	st.pieces++
 	return nil
 }
 

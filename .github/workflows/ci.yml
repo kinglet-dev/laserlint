@@ -54,4 +54,6 @@ jobs:
       - name: Known vulnerabilities (govulncheck)
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.8.0 ./...
       - name: Fuzz parsers (30 s each)
-        run: go test ./domain/units -run '^$' -fuzz=FuzzParseLength -fuzztime=30s
+        run: |
+          go test ./domain/units -run '^$' -fuzz=FuzzParseLength -fuzztime=30s
+          go test ./adapters/svg/pathdata -run '^$' -fuzz=FuzzParse -fuzztime=30s

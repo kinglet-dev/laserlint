@@ -27,10 +27,19 @@ type state struct {
 	// The last curve's final control point, which S and T mirror.
 	prevKind, lastKind byte // 'C' after C/S, 'Q' after Q/T, 0 otherwise
 	prevCtrl, lastCtrl geom.Point
+
+	pieces int // moves and segments so far, checked against the limit
 }
 
-// Parse reads SVG path data such as "M 10 20 L 30 40 Z".
-func Parse(d string) (geom.Path, error) {
+// DefaultMaxPieces bounds the moves and segments in one path (threat model).
+const DefaultMaxPieces = 2_000_000
+
+// Parse reads SVG path data such as "M 10 20 L 30 40 Z", allowing up to
+// DefaultMaxPieces moves and segments.
+func Parse(d string) (geom.Path, error) { return ParseLimited(d, DefaultMaxPieces) }
+
+// ParseLimited is Parse with a limit on the number of moves and segments.
+func ParseLimited(d string, maxPieces int) (geom.Path, error) {
 	s := &scanner{d: d}
 	st := &state{}
 	for !s.done() {
@@ -48,6 +57,9 @@ func Parse(d string) (geom.Path, error) {
 			st.prevKind, st.prevCtrl, st.lastKind = st.lastKind, st.lastCtrl, 0
 			if err := run(st, s, rel); err != nil {
 				return geom.Path{}, err
+			}
+			if st.pieces > maxPieces {
+				return geom.Path{}, s.fail(ErrTooComplex, at)
 			}
 			if upper == 'Z' || !s.numberNext() {
 				break
@@ -80,5 +92,6 @@ func (st *state) add(seg geom.Segment) {
 	}
 	sub := &st.path.Subpaths[n-1]
 	sub.Segments = append(sub.Segments, seg)
+	st.pieces++
 	st.current = seg.To
 }
