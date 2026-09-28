@@ -8,4 +8,5 @@ var (
 	ErrUnknownCommand = errors.New("unknown path command")
 	ErrBadNumber      = errors.New("expected a number")
 	ErrOutOfRange     = errors.New("coordinate is outside ±10,000,000")
+	ErrBadFlag        = errors.New("expected an arc flag, 0 or 1")
 )

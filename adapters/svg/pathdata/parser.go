@@ -15,7 +15,7 @@ type handler func(st *state, s *scanner, rel bool) error
 // adding a command means adding an entry, not editing the parse loop.
 var handlers = map[byte]handler{
 	'M': moveTo, 'L': lineTo, 'H': horizontal, 'V': vertical, 'Z': closePath,
-	'C': cubicTo, 'S': smoothCubicTo, 'Q': quadTo, 'T': smoothQuadTo,
+	'C': cubicTo, 'S': smoothCubicTo, 'Q': quadTo, 'T': smoothQuadTo, 'A': arcTo,
 }
 
 // state is the pen position while parsing.
