@@ -12,6 +12,21 @@ func cubic(x1, y1, x2, y2, x, y float64) geom.Segment {
 	return geom.CubicTo(pt(x1, y1), pt(x2, y2), pt(x, y))
 }
 
+// expectSegments compares segments to within 1e-9. Exact comparison fails
+// across CPUs: arm64 fuses multiply-adds into one rounding, amd64 rounds twice,
+// and Go evaluates constant expressions in tests exactly at compile time.
+func expectSegments(got, want []geom.Segment) {
+	ExpectWithOffset(1, got).To(HaveLen(len(want)))
+	for i, w := range want {
+		g := got[i]
+		ExpectWithOffset(1, g.Curved).To(Equal(w.Curved), "segment %d curved", i)
+		for j, pair := range [][2]geom.Point{{g.C1, w.C1}, {g.C2, w.C2}, {g.To, w.To}} {
+			ExpectWithOffset(1, pair[0].X).To(BeNumerically("~", pair[1].X, 1e-9), "segment %d point %d x", i, j)
+			ExpectWithOffset(1, pair[0].Y).To(BeNumerically("~", pair[1].Y, 1e-9), "segment %d point %d y", i, j)
+		}
+	}
+}
+
 var _ = DescribeTable("ParsePath with curve commands",
 	func(d string, want []geom.Segment) {
 		// Arrange: d and want come from the table entry.
@@ -21,7 +36,7 @@ var _ = DescribeTable("ParsePath with curve commands",
 
 		// Assert
 		Expect(err).NotTo(HaveOccurred())
-		Expect(path.Subpaths[0].Segments).To(Equal(want))
+		expectSegments(path.Subpaths[0].Segments, want)
 	},
 	Entry("an absolute cubic", "M0 0 C 1 2 3 4 5 6",
 		[]geom.Segment{cubic(1, 2, 3, 4, 5, 6)}),
