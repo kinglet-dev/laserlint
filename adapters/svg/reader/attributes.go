@@ -10,11 +10,14 @@ import (
 // attributes maps an element's attribute names (without namespace) to values.
 type attributes map[string]string
 
-// attrs collects an element's attributes.
+// attrs collects an element's SVG attributes, leaving out those in other
+// namespaces (an editor's own settings).
 func attrs(el xml.StartElement) attributes {
 	m := make(attributes, len(el.Attr))
 	for _, a := range el.Attr {
-		m[a.Name.Local] = a.Value
+		if a.Name.Space == "" {
+			m[a.Name.Local] = a.Value
+		}
 	}
 	return m
 }

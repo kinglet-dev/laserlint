@@ -7,5 +7,6 @@ var (
 	ErrNoSize      = errors.New("the SVG has no usable size: give the <svg> element a width and height in mm or in, or a viewBox")
 	ErrBadViewBox  = errors.New("the viewBox must be four numbers with a positive width and height")
 	ErrUnsupported = errors.New("this SVG feature isn't supported yet")
+	ErrNotSVG      = errors.New("the file is not an SVG")
 	ErrBadXML      = errors.New("the file is not well-formed XML: open and re-save it in Inkscape")
 )

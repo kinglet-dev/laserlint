@@ -38,11 +38,11 @@ func Read(r io.Reader) (design.Design, error) {
 			return w.design, nil
 		}
 		if err != nil {
-			return design.Design{}, fmt.Errorf("%w (%v)", ErrBadXML, err)
+			return design.Design{}, badXML(err)
 		}
 		switch t := tok.(type) {
 		case xml.StartElement:
-			if err := w.start(t); err != nil {
+			if err := w.element(dec, t); err != nil {
 				return design.Design{}, err
 			}
 		case xml.EndElement:
@@ -50,6 +50,23 @@ func Read(r io.Reader) (design.Design, error) {
 		}
 	}
 }
+
+// element reads, skips or refuses one element.
+func (w *walker) element(dec *xml.Decoder, el xml.StartElement) error {
+	skip, err := w.classify(el)
+	if err != nil {
+		return err
+	}
+	if !skip {
+		return w.start(el)
+	}
+	if err := dec.Skip(); err != nil {
+		return badXML(err)
+	}
+	return nil
+}
+
+func badXML(err error) error { return fmt.Errorf("%w (%v)", ErrBadXML, err) }
 
 // start works out an element's context, pushes it, and records any shape.
 func (w *walker) start(el xml.StartElement) error {
