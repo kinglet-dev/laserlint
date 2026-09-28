@@ -15,6 +15,7 @@ type handler func(st *state, s *scanner, rel bool) error
 // adding a command means adding an entry, not editing the parse loop.
 var handlers = map[byte]handler{
 	'M': moveTo, 'L': lineTo, 'H': horizontal, 'V': vertical, 'Z': closePath,
+	'C': cubicTo, 'S': smoothCubicTo, 'Q': quadTo, 'T': smoothQuadTo,
 }
 
 // state is the pen position while parsing.
@@ -22,6 +23,10 @@ type state struct {
 	path    geom.Path
 	current geom.Point // where the pen is
 	start   geom.Point // start of the current subpath, where Z returns to
+
+	// The last curve's final control point, which S and T mirror.
+	prevKind, lastKind byte // 'C' after C/S, 'Q' after Q/T, 0 otherwise
+	prevCtrl, lastCtrl geom.Point
 }
 
 // Parse reads SVG path data such as "M 10 20 L 30 40 Z".
@@ -40,6 +45,7 @@ func Parse(d string) (geom.Path, error) {
 			return geom.Path{}, s.fail(ErrUnknownCommand, at)
 		}
 		for {
+			st.prevKind, st.prevCtrl, st.lastKind = st.lastKind, st.lastCtrl, 0
 			if err := run(st, s, rel); err != nil {
 				return geom.Path{}, err
 			}
