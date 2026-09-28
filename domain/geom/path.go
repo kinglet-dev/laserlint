@@ -44,3 +44,27 @@ func (p Path) Flatten(tolerance float64) []Polyline {
 
 // CubicTo returns a cubic Bézier segment with control points c1, c2, ending at to.
 func CubicTo(c1, c2, to Point) Segment { return Segment{C1: c1, C2: c2, To: to, Curved: true} }
+
+// QuadTo returns the cubic equivalent of the quadratic Bézier from p0 via control q to p2.
+func QuadTo(p0, q, p2 Point) Segment {
+	// Degree elevation: each cubic control point lies 2/3 of the way to q.
+	return CubicTo(
+		Point{X: p0.X + 2.0/3*(q.X-p0.X), Y: p0.Y + 2.0/3*(q.Y-p0.Y)},
+		Point{X: p2.X + 2.0/3*(q.X-p2.X), Y: p2.Y + 2.0/3*(q.Y-p2.Y)},
+		p2,
+	)
+}
+
+// Transform returns the path with m applied to every point. Affine transforms
+// map Bézier curves exactly by mapping their control points.
+func (p Path) Transform(m Matrix) Path {
+	out := Path{Subpaths: make([]Subpath, len(p.Subpaths))}
+	for i, sub := range p.Subpaths {
+		segs := make([]Segment, len(sub.Segments))
+		for j, s := range sub.Segments {
+			segs[j] = Segment{C1: m.Apply(s.C1), C2: m.Apply(s.C2), To: m.Apply(s.To), Curved: s.Curved}
+		}
+		out.Subpaths[i] = Subpath{Start: m.Apply(sub.Start), Segments: segs, Closed: sub.Closed}
+	}
+	return out
+}
