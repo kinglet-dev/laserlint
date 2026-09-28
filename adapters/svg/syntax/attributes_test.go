@@ -69,4 +69,16 @@ var _ = Describe("ParsePoints", func() {
 		// Assert
 		Expect(err).To(MatchError(ContainSubstring("expected a number at character 7")))
 	})
+
+	It("stops at a limit on the number of points, so memory stays bounded", func() {
+		// Act
+		within, errWithin := syntax.ParsePointsLimited("0 0 1 1", 2)
+		_, errOver := syntax.ParsePointsLimited("0 0 1 1 2 2", 2)
+
+		// Assert
+		Expect(errWithin).NotTo(HaveOccurred())
+		Expect(within).To(HaveLen(2))
+		Expect(errOver).To(MatchError(syntax.ErrTooComplex))
+		Expect(errOver).To(MatchError(ContainSubstring("at character 9")))
+	})
 })

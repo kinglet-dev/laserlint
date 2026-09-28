@@ -9,9 +9,11 @@ import (
 
 // shapeKind builds one kind of SVG shape element (Strategy pattern): the
 // element's outline in user units, or drawn = false when SVG draws nothing.
+// budget is how many path pieces it may use; builders that could allocate
+// more stop early, and the walker checks the rest.
 // fillable is false for elements with no area, whose fill is never scored.
 type shapeKind struct {
-	build    func(a attributes) (outline geom.Path, drawn bool, err error)
+	build    func(a attributes, budget int) (outline geom.Path, drawn bool, err error)
 	fillable bool
 }
 
@@ -26,12 +28,12 @@ var shapeKinds = map[string]shapeKind{
 	"polygon":  {pointsShape(true), true},
 }
 
-func pathShape(a attributes) (geom.Path, bool, error) {
-	p, err := syntax.ParsePath(a["d"])
+func pathShape(a attributes, budget int) (geom.Path, bool, error) {
+	p, err := syntax.ParsePathLimited(a["d"], budget)
 	return p, err == nil, err
 }
 
-func lineShape(a attributes) (geom.Path, bool, error) {
+func lineShape(a attributes, _ int) (geom.Path, bool, error) {
 	v, err := a.numbers("x1", "y1", "x2", "y2")
 	if err != nil {
 		return geom.Path{}, false, err
@@ -40,9 +42,9 @@ func lineShape(a attributes) (geom.Path, bool, error) {
 }
 
 // pointsShape builds a polyline, or a polygon when closed.
-func pointsShape(closed bool) func(a attributes) (geom.Path, bool, error) {
-	return func(a attributes) (geom.Path, bool, error) {
-		points, err := syntax.ParsePoints(a["points"])
+func pointsShape(closed bool) func(a attributes, budget int) (geom.Path, bool, error) {
+	return func(a attributes, budget int) (geom.Path, bool, error) {
+		points, err := syntax.ParsePointsLimited(a["points"], budget+1)
 		if err != nil {
 			return geom.Path{}, false, fmt.Errorf("points: %w", err)
 		}

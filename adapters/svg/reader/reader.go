@@ -9,29 +9,35 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/kinglet-dev/laserlint/adapters/svg/syntax"
 	"github.com/kinglet-dev/laserlint/domain/design"
 	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
 // context is what an element inherits from its ancestors: the matrix from
-// its user units to millimetres, and its paint.
+// its user units to millimetres, its paint, and whether it is being skipped.
 type context struct {
 	toMM  geom.Matrix
 	paint paint
+	skip  bool
 }
 
 // walker reads a document element by element, keeping a stack of contexts
 // that is pushed at each start tag and popped at each end tag.
 type walker struct {
-	design design.Design
-	stack  []context
+	design   design.Design
+	stack    []context
+	limits   Limits
+	elements int
+	pieces   int
 }
 
-// Read parses an SVG document.
-func Read(r io.Reader) (design.Design, error) {
-	dec := xml.NewDecoder(r)
-	w := &walker{}
+// Read parses an SVG document within DefaultLimits.
+func Read(r io.Reader) (design.Design, error) { return ReadLimited(r, DefaultLimits) }
+
+// ReadLimited parses an SVG document within the given limits.
+func ReadLimited(r io.Reader, limits Limits) (design.Design, error) {
+	dec := xml.NewDecoder(&limitedReader{r: r, left: limits.Bytes, limit: limits.Bytes})
+	w := &walker{limits: limits}
 	for {
 		tok, err := dec.Token()
 		if errors.Is(err, io.EOF) {
@@ -40,92 +46,46 @@ func Read(r io.Reader) (design.Design, error) {
 		if err != nil {
 			return design.Design{}, badXML(err)
 		}
-		switch t := tok.(type) {
-		case xml.StartElement:
-			if err := w.element(dec, t); err != nil {
-				return design.Design{}, err
-			}
-		case xml.EndElement:
-			w.stack = w.stack[:len(w.stack)-1]
+		if err := w.token(tok); err != nil {
+			return design.Design{}, err
 		}
 	}
+}
+
+// badXML explains a decoder error; hitting the size limit is reported as is.
+func badXML(err error) error {
+	if errors.Is(err, ErrTooLarge) {
+		return err
+	}
+	return fmt.Errorf("%w (%v)", ErrBadXML, err)
+}
+
+// token handles one XML token.
+func (w *walker) token(tok xml.Token) error {
+	switch t := tok.(type) {
+	case xml.StartElement:
+		return w.element(t)
+	case xml.EndElement:
+		w.stack = w.stack[:len(w.stack)-1]
+	case xml.Directive:
+		return directive(t)
+	}
+	return nil
 }
 
 // element reads, skips or refuses one element.
-func (w *walker) element(dec *xml.Decoder, el xml.StartElement) error {
-	skip, err := w.classify(el)
-	if err != nil {
+func (w *walker) element(el xml.StartElement) error {
+	if err := w.count(); err != nil {
 		return err
 	}
-	if !skip {
-		return w.start(el)
-	}
-	if err := dec.Skip(); err != nil {
-		return badXML(err)
-	}
-	return nil
-}
-
-func badXML(err error) error { return fmt.Errorf("%w (%v)", ErrBadXML, err) }
-
-// start works out an element's context, pushes it, and records any shape.
-func (w *walker) start(el xml.StartElement) error {
-	a := attrs(el)
-	ctx, err := w.context(el, a)
-	if err != nil {
-		return err
-	}
-	w.stack = append(w.stack, ctx)
-	kind, ok := shapeKinds[el.Name.Local]
-	if !ok {
+	if len(w.stack) > 0 && w.stack[len(w.stack)-1].skip {
+		w.stack = append(w.stack, context{skip: true})
 		return nil
 	}
-	path, drawn, err := kind.build(a)
-	if err != nil {
-		return fmt.Errorf("%s: %w", describe(el), err)
+	skip, err := w.classify(el)
+	if err != nil || skip {
+		w.stack = append(w.stack, context{skip: true})
+		return err
 	}
-	if !kind.fillable {
-		ctx.paint.fill = "none"
-	}
-	if drawn {
-		w.addShape(path, ctx)
-	}
-	return nil
-}
-
-// context combines an element's own attributes with what it inherits. The
-// root svg element sets the millimetre scale from the document's size.
-func (w *walker) context(el xml.StartElement, a attributes) (context, error) {
-	if len(w.stack) == 0 {
-		var ctx context
-		var err error
-		if w.design.Width, w.design.Height, ctx.toMM, err = size(a); err != nil {
-			return context{}, err
-		}
-		ctx.paint = initialPaint.with(a)
-		return ctx, nil
-	}
-	parent := w.stack[len(w.stack)-1]
-	ctx := context{toMM: parent.toMM, paint: parent.paint.with(a)}
-	if list, ok := a["transform"]; ok {
-		m, err := syntax.ParseTransform(list)
-		if err != nil {
-			return context{}, fmt.Errorf("%s: %w", describe(el), err)
-		}
-		ctx.toMM = m.Then(parent.toMM)
-	}
-	return ctx, nil
-}
-
-// addShape records a shape in millimetres with what the laser will score.
-// Shapes with no fill and no stroke are dropped: nothing is scored.
-func (w *walker) addShape(path geom.Path, ctx context) {
-	if !ctx.paint.visible() {
-		return
-	}
-	w.design.Shapes = append(w.design.Shapes, design.Shape{
-		Path:      path.Transform(ctx.toMM),
-		Filled:    ctx.paint.filled(),
-		WhiteFill: ctx.paint.white(),
-	})
+	return w.start(el)
 }

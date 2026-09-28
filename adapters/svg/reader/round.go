@@ -6,7 +6,7 @@ import (
 	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
-func rectShape(a attributes) (geom.Path, bool, error) {
+func rectShape(a attributes, _ int) (geom.Path, bool, error) {
 	v, err := a.numbers("x", "y", "width", "height")
 	if err != nil {
 		return geom.Path{}, false, err
@@ -32,7 +32,7 @@ func rectShape(a attributes) (geom.Path, bool, error) {
 	return o.closed(), true, nil
 }
 
-func circleShape(a attributes) (geom.Path, bool, error) {
+func circleShape(a attributes, _ int) (geom.Path, bool, error) {
 	v, err := a.numbers("cx", "cy", "r")
 	if err != nil || v[2] <= 0 {
 		return geom.Path{}, false, err
@@ -40,7 +40,7 @@ func circleShape(a attributes) (geom.Path, bool, error) {
 	return ellipsePath(v[0], v[1], v[2], v[2]), true, nil
 }
 
-func ellipseShape(a attributes) (geom.Path, bool, error) {
+func ellipseShape(a attributes, _ int) (geom.Path, bool, error) {
 	v, err := a.numbers("cx", "cy")
 	if err != nil {
 		return geom.Path{}, false, err

@@ -23,12 +23,23 @@ func ParseNumber(value string) (float64, error) {
 	return n, nil
 }
 
+// DefaultMaxPoints bounds ParsePoints, matching the limit on path pieces.
+const DefaultMaxPoints = DefaultMaxPieces
+
 // ParsePoints reads the points of a polyline or polygon: x,y pairs
 // separated by whitespace and commas.
 func ParsePoints(value string) ([]geom.Point, error) {
+	return ParsePointsLimited(value, DefaultMaxPoints)
+}
+
+// ParsePointsLimited is ParsePoints with a limit on the number of points.
+func ParsePointsLimited(value string, maxPoints int) ([]geom.Point, error) {
 	s := &scanner{d: value}
 	var points []geom.Point
 	for !s.done() {
+		if len(points) == maxPoints {
+			return nil, s.fail(ErrTooComplex, s.pos)
+		}
 		x, err := s.number()
 		if err != nil {
 			return nil, err
