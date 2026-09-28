@@ -1,6 +1,7 @@
-// Package pathdata parses SVG path data (the d attribute) into geometry.
+// Package syntax parses the small languages inside SVG attributes: path data
+// (the d attribute) and transform lists.
 // Input is untrusted: the grammar is strict and the amount of work is bounded.
-package pathdata
+package syntax
 
 import (
 	"math"
@@ -34,12 +35,12 @@ type state struct {
 // DefaultMaxPieces bounds the moves and segments in one path (threat model).
 const DefaultMaxPieces = 2_000_000
 
-// Parse reads SVG path data such as "M 10 20 L 30 40 Z", allowing up to
+// ParsePath reads SVG path data such as "M 10 20 L 30 40 Z", allowing up to
 // DefaultMaxPieces moves and segments.
-func Parse(d string) (geom.Path, error) { return ParseLimited(d, DefaultMaxPieces) }
+func ParsePath(d string) (geom.Path, error) { return ParsePathLimited(d, DefaultMaxPieces) }
 
-// ParseLimited is Parse with a limit on the number of moves and segments.
-func ParseLimited(d string, maxPieces int) (geom.Path, error) {
+// ParsePathLimited is ParsePath with a limit on the number of moves and segments.
+func ParsePathLimited(d string, maxPieces int) (geom.Path, error) {
 	s := &scanner{d: d}
 	st := &state{}
 	for !s.done() {

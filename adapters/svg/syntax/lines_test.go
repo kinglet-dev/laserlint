@@ -1,22 +1,22 @@
-package pathdata_test
+package syntax_test
 
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/kinglet-dev/laserlint/adapters/svg/pathdata"
+	"github.com/kinglet-dev/laserlint/adapters/svg/syntax"
 	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
 func pt(x, y float64) geom.Point { return geom.Point{X: x, Y: y} }
 
-var _ = Describe("Parse with move and line commands", func() {
+var _ = Describe("ParsePath with move and line commands", func() {
 	It("reads an absolute move followed by an absolute line", func() {
 		// Arrange
 		d := "M 10 20 L 30 40"
 
 		// Act
-		path, err := pathdata.Parse(d)
+		path, err := syntax.ParsePath(d)
 
 		// Assert
 		Expect(err).NotTo(HaveOccurred())
@@ -27,12 +27,12 @@ var _ = Describe("Parse with move and line commands", func() {
 // line is shorthand for a straight segment to (x, y).
 func line(x, y float64) geom.Segment { return geom.LineTo(pt(x, y)) }
 
-var _ = DescribeTable("Parse with the other straight-line forms",
+var _ = DescribeTable("ParsePath with the other straight-line forms",
 	func(d string, want []geom.Subpath) {
 		// Arrange: d and want come from the table entry.
 
 		// Act
-		path, err := pathdata.Parse(d)
+		path, err := syntax.ParsePath(d)
 
 		// Assert
 		Expect(err).NotTo(HaveOccurred())

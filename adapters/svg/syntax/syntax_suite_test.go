@@ -1,4 +1,4 @@
-package pathdata_test
+package syntax_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestPathData(t *testing.T) {
+func TestSyntax(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Path Data Suite")
+	RunSpecs(t, "SVG Syntax Suite")
 }

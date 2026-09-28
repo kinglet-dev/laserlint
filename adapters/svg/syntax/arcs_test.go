@@ -1,19 +1,19 @@
-package pathdata_test
+package syntax_test
 
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/kinglet-dev/laserlint/adapters/svg/pathdata"
+	"github.com/kinglet-dev/laserlint/adapters/svg/syntax"
 	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
-var _ = DescribeTable("Parse with arc commands",
+var _ = DescribeTable("ParsePath with arc commands",
 	func(d string, want []geom.Segment) {
 		// Arrange: d and want come from the table entry.
 
 		// Act
-		path, err := pathdata.Parse(d)
+		path, err := syntax.ParsePath(d)
 
 		// Assert
 		Expect(err).NotTo(HaveOccurred())
@@ -31,13 +31,13 @@ var _ = DescribeTable("Parse with arc commands",
 		append(geom.ArcTo(pt(0, 0), 5, 5, 0, false, true, pt(10, 0)), geom.ArcTo(pt(10, 0), 5, 5, 0, false, true, pt(20, 0))...)),
 )
 
-var _ = Describe("Parse with an arc back to its own start", func() {
+var _ = Describe("ParsePath with an arc back to its own start", func() {
 	It("draws nothing but keeps the pen at the end point", func() {
 		// Arrange
 		d := "M 3 3 A 5 5 0 0 1 3 3 L 6 3"
 
 		// Act
-		path, err := pathdata.Parse(d)
+		path, err := syntax.ParsePath(d)
 
 		// Assert
 		Expect(err).NotTo(HaveOccurred())
@@ -45,20 +45,20 @@ var _ = Describe("Parse with an arc back to its own start", func() {
 	})
 })
 
-var _ = DescribeTable("Parse refuses malformed arcs",
+var _ = DescribeTable("ParsePath refuses malformed arcs",
 	func(d string, want error) {
 		// Arrange: d and want come from the table entry.
 
 		// Act
-		_, err := pathdata.Parse(d)
+		_, err := syntax.ParsePath(d)
 
 		// Assert
 		Expect(err).To(MatchError(want))
 	},
-	Entry("a flag that isn't 0 or 1", "M0 0 A 5 5 0 2 1 10 0", pathdata.ErrBadFlag),
-	Entry("a bad sweep flag", "M0 0 A 5 5 0 0 x 10 0", pathdata.ErrBadFlag),
-	Entry("a missing flag", "M0 0 A 5 5 0", pathdata.ErrBadFlag),
-	Entry("a missing radius", "M0 0 A 5", pathdata.ErrBadNumber),
-	Entry("a missing rotation", "M0 0 A 5 5", pathdata.ErrBadNumber),
-	Entry("a missing end point", "M0 0 A 5 5 0 0 1 10", pathdata.ErrBadNumber),
+	Entry("a flag that isn't 0 or 1", "M0 0 A 5 5 0 2 1 10 0", syntax.ErrBadFlag),
+	Entry("a bad sweep flag", "M0 0 A 5 5 0 0 x 10 0", syntax.ErrBadFlag),
+	Entry("a missing flag", "M0 0 A 5 5 0", syntax.ErrBadFlag),
+	Entry("a missing radius", "M0 0 A 5", syntax.ErrBadNumber),
+	Entry("a missing rotation", "M0 0 A 5 5", syntax.ErrBadNumber),
+	Entry("a missing end point", "M0 0 A 5 5 0 0 1 10", syntax.ErrBadNumber),
 )

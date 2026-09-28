@@ -1,4 +1,4 @@
-package pathdata
+package syntax
 
 import "github.com/kinglet-dev/laserlint/domain/geom"
 

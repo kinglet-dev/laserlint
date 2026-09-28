@@ -56,4 +56,4 @@ jobs:
       - name: Fuzz parsers (30 s each)
         run: |
           go test ./domain/units -run '^$' -fuzz=FuzzParseLength -fuzztime=30s
-          go test ./adapters/svg/pathdata -run '^$' -fuzz=FuzzParse -fuzztime=30s
+          go test ./adapters/svg/syntax -run '^$' -fuzz=FuzzParsePath -fuzztime=30s

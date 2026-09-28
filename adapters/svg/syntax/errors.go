@@ -1,4 +1,4 @@
-package pathdata
+package syntax
 
 import "errors"
 
