@@ -20,7 +20,7 @@ type box struct{ x, y, w, h float64 }
 // user units to millimetres, following the SVG rules: numbers without units
 // are CSS pixels, a missing width or height comes from the viewBox, and
 // without a viewBox one user unit is one CSS pixel.
-func size(a map[string]string) (width, height float64, toMM geom.Matrix, err error) {
+func size(a attributes) (width, height float64, toMM geom.Matrix, err error) {
 	vb, hasBox, err := viewBox(a["viewBox"])
 	if err != nil {
 		return 0, 0, geom.Matrix{}, err

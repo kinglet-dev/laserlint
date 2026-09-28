@@ -12,7 +12,7 @@ var initialPaint = paint{fill: "black", stroke: "none"}
 
 // with returns the paint for an element: the inherited paint, overridden
 // by the element's fill and stroke attributes, then by its style attribute.
-func (p paint) with(a map[string]string) paint {
+func (p paint) with(a attributes) paint {
 	p.set("fill", a["fill"])
 	p.set("stroke", a["stroke"])
 	for _, decl := range strings.Split(a["style"], ";") {

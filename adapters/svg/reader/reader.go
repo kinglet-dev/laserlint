@@ -59,11 +59,18 @@ func (w *walker) start(el xml.StartElement) error {
 		return err
 	}
 	w.stack = append(w.stack, ctx)
-	if el.Name.Local == "path" {
-		path, err := syntax.ParsePath(a["d"])
-		if err != nil {
-			return fmt.Errorf("%s: %w", describe(el), err)
-		}
+	kind, ok := shapeKinds[el.Name.Local]
+	if !ok {
+		return nil
+	}
+	path, drawn, err := kind.build(a)
+	if err != nil {
+		return fmt.Errorf("%s: %w", describe(el), err)
+	}
+	if !kind.fillable {
+		ctx.paint.fill = "none"
+	}
+	if drawn {
 		w.addShape(path, ctx)
 	}
 	return nil
@@ -71,7 +78,7 @@ func (w *walker) start(el xml.StartElement) error {
 
 // context combines an element's own attributes with what it inherits. The
 // root svg element sets the millimetre scale from the document's size.
-func (w *walker) context(el xml.StartElement, a map[string]string) (context, error) {
+func (w *walker) context(el xml.StartElement, a attributes) (context, error) {
 	if len(w.stack) == 0 {
 		var ctx context
 		var err error
@@ -104,21 +111,4 @@ func (w *walker) addShape(path geom.Path, ctx context) {
 		Filled:    ctx.paint.filled(),
 		WhiteFill: ctx.paint.white(),
 	})
-}
-
-// attrs maps an element's attribute names to values.
-func attrs(el xml.StartElement) map[string]string {
-	m := make(map[string]string, len(el.Attr))
-	for _, a := range el.Attr {
-		m[a.Name.Local] = a.Value
-	}
-	return m
-}
-
-// describe names an element for error messages, with its id when it has one.
-func describe(el xml.StartElement) string {
-	if id := attrs(el)["id"]; id != "" {
-		return fmt.Sprintf("<%s id=%q>", el.Name.Local, id)
-	}
-	return "<" + el.Name.Local + ">"
 }
