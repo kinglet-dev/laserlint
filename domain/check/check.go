@@ -35,10 +35,14 @@ type Settings struct {
 	Detail    float64 // smallest closed shape that survives, across
 	MaxClose  float64 // largest share (0–1) of scored line allowed too close
 	WarnClose float64 // share (0–1) of scored line too close from which to warn
+
+	WarnDensity float64 // mm of line per mm² in the densest 10 mm area above which to warn
+	MaxDensity  float64 // mm of line per mm² in the densest 10 mm area allowed before it is a problem
 }
 
 // DefaultSettings suit xTool D1 Pro and P2 diode lasers on plywood.
-var DefaultSettings = Settings{Line: 0.10, Gap: 0.25, Detail: 0.5, MaxClose: 0.10, WarnClose: 0.01}
+var DefaultSettings = Settings{Line: 0.10, Gap: 0.25, Detail: 0.5, MaxClose: 0.10, WarnClose: 0.01,
+	WarnDensity: 0.9, MaxDensity: 2.0}
 
 // Input is what every check looks at.
 type Input struct {
