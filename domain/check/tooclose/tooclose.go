@@ -14,13 +14,6 @@ import (
 // maxSamples bounds the work on huge designs (threat model: 5,000,000).
 const maxSamples = 5_000_000
 
-// maxLocations is how many of the nearest places a finding lists.
-const maxLocations = 5
-
-// samePlace is how near two spots are to count as one place, in mm: both
-// lines of a close pair report the same place.
-const samePlace = 1.0
-
 // Check is the lines-too-close check.
 type Check struct{}
 
@@ -63,23 +56,9 @@ func (c Check) Run(in check.Input, s check.Settings) ([]check.Finding, error) {
 
 // places lists the nearest spots, each place once.
 func places(spots []spacing.Spot) []geom.Point {
-	var out []geom.Point
-	for _, s := range spots {
-		if len(out) == maxLocations {
-			break
-		}
-		if !listed(out, s.At) {
-			out = append(out, s.At)
-		}
+	points := make([]geom.Point, len(spots))
+	for i, s := range spots {
+		points[i] = s.At
 	}
-	return out
-}
-
-func listed(points []geom.Point, p geom.Point) bool {
-	for _, q := range points {
-		if math.Hypot(q.X-p.X, q.Y-p.Y) < samePlace {
-			return true
-		}
-	}
-	return false
+	return check.Places(points)
 }

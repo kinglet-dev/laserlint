@@ -32,6 +32,8 @@ func parse(args []string) (options, error) {
 	maxClose := fs.String("max-close", "10%", "")
 	warnDensity := fs.String("warn-density", "0.9", "")
 	maxDensity := fs.String("max-density", "2", "")
+	detail := fs.String("detail", "0.5mm", "")
+	maxDetails := fs.String("max-details", "20", "")
 	maxCrossings := fs.String("max-crossings", "50", "")
 	maxStacked := fs.String("max-stacked", "2mm", "")
 	var o options
@@ -67,7 +69,16 @@ func parse(args []string) (options, error) {
 		err = errors.New("--warn-density must not be more than --max-density")
 	}
 	if err == nil {
-		s.MaxCrossings, err = count("--max-crossings", *maxCrossings)
+		s.Detail, err = length("--detail", *detail)
+	}
+	if err == nil && s.Detail == 0 {
+		err = errors.New("--detail must be more than zero")
+	}
+	if err == nil {
+		s.MaxDetails, err = count("--max-details", *maxDetails, "shapes", 20)
+	}
+	if err == nil {
+		s.MaxCrossings, err = count("--max-crossings", *maxCrossings, "crossings", 50)
 	}
 	if err == nil {
 		s.MaxStacked, err = length("--max-stacked", *maxStacked)
@@ -110,11 +121,11 @@ func positive(flag, value string) (float64, error) {
 	return v, nil
 }
 
-// count reads a whole number of zero or more.
-func count(flag, value string) (int, error) {
+// count reads a whole number of zero or more; things and example word the message.
+func count(flag, value, things string, example int) (int, error) {
 	v, err := strconv.Atoi(value)
 	if err != nil || v < 0 {
-		return 0, fmt.Errorf("%s: write a whole number of crossings, such as 50", flag)
+		return 0, fmt.Errorf("%s: write a whole number of %s, such as %d", flag, things, example)
 	}
 	return v, nil
 }

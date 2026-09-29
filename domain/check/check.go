@@ -39,13 +39,14 @@ type Settings struct {
 	WarnDensity float64 // mm of line per mm² in the densest 10 mm area above which to warn
 	MaxDensity  float64 // mm of line per mm² in the densest 10 mm area allowed before it is a problem
 
+	MaxDetails   int     // closed shapes smaller than Detail allowed before it is a problem
 	MaxCrossings int     // places where lines cross allowed before it is a problem
 	MaxStacked   float64 // length of line lying on other line allowed before it is a problem
 }
 
 // DefaultSettings suit xTool D1 Pro and P2 diode lasers on plywood.
 var DefaultSettings = Settings{Line: 0.10, Gap: 0.25, Detail: 0.5, MaxClose: 0.10, WarnClose: 0.01,
-	WarnDensity: 0.9, MaxDensity: 2.0, MaxCrossings: 50, MaxStacked: 2.0}
+	WarnDensity: 0.9, MaxDensity: 2.0, MaxDetails: 20, MaxCrossings: 50, MaxStacked: 2.0}
 
 // Input is what every check looks at.
 type Input struct {

@@ -42,7 +42,7 @@ var _ = Describe("The JSON report (kinglet.report/v1)", func() {
 			"tool": {"name": "laserlint", "version": "0.1.0"},
 			"input": {"name": "coaster.svg", "width_mm": 80, "height_mm": 74.5},
 			"settings": {"line_mm": 0.1, "gap_mm": 0.25, "warn_close": 0.01, "max_close": 0.1, "warn_density": 0.9, "max_density": 2,
-				"max_crossings": 50, "max_stacked_mm": 2},
+				"detail_mm": 0.5, "max_details": 20, "max_crossings": 50, "max_stacked_mm": 2},
 			"checks": [
 				{"id": "lines-too-close", "name": "Lines too close"},
 				{"id": "crossings", "name": "Crossings"}

@@ -46,6 +46,8 @@ type settings struct {
 	WarnDensity float64 `json:"warn_density"`
 	MaxDensity  float64 `json:"max_density"`
 
+	Detail       float64 `json:"detail_mm"`
+	MaxDetails   int     `json:"max_details"`
 	MaxCrossings int     `json:"max_crossings"`
 	MaxStacked   float64 `json:"max_stacked_mm"`
 }
@@ -91,6 +93,7 @@ func (Format) Write(w io.Writer, a report.About, r app.Report) error {
 		Input:  input{Name: a.Input, Width: mm(r.Width), Height: mm(r.Height)},
 		Settings: settings{Line: r.Settings.Line, Gap: r.Settings.Gap, WarnClose: r.Settings.WarnClose, MaxClose: r.Settings.MaxClose,
 			WarnDensity: r.Settings.WarnDensity, MaxDensity: r.Settings.MaxDensity,
+			Detail: r.Settings.Detail, MaxDetails: r.Settings.MaxDetails,
 			MaxCrossings: r.Settings.MaxCrossings, MaxStacked: r.Settings.MaxStacked},
 		Checks:   []ran{},
 		Findings: []finding{},

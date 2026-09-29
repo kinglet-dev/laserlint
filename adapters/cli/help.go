@@ -2,7 +2,7 @@ package cli
 
 // help is laserlint's usage text.
 const help = `laserlint checks an SVG for laser score lines that are too close together,
-packed too densely, or crossing.
+packed too densely, crossing, or too small to survive.
 
 Usage:
   laserlint [flags] FILE
@@ -20,6 +20,9 @@ Flags:
                        per mm² (default 0.9, lines about 1.1 mm apart)
   --max-density N      a problem above N mm of line per mm² (default 2, lines
                        about 0.5 mm apart)
+  --detail LENGTH      smallest closed shape that survives, across (default 0.5mm)
+  --max-details N      a problem when more than N closed shapes are smaller
+                       than --detail (default 20)
   --max-crossings N    a problem when score lines cross in more than N places
                        (default 50)
   --max-stacked LENGTH a problem when more than this length of line lies on
