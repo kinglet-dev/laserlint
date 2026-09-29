@@ -48,6 +48,7 @@ type Input struct {
 
 // Check is one kind of check.
 type Check interface {
-	ID() string
+	ID() string   // stable id, used in JSON output
+	Name() string // short name for people, e.g. "Lines too close"
 	Run(in Input, s Settings) ([]Finding, error)
 }

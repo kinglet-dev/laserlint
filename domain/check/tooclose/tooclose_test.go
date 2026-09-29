@@ -34,6 +34,14 @@ var _ = Describe("The lines-too-close check", func() {
 		Expect(id).To(Equal("lines-too-close"))
 	})
 
+	It("is a check with a name for people", func() {
+		// Act
+		var c check.Check = tooclose.New()
+
+		// Assert
+		Expect(c.Name()).To(Equal("Lines too close"))
+	})
+
 	It("finds nothing when every line keeps its distance", func() {
 		// Act
 		f := run(line(pt(0, 0), pt(10, 0)), line(pt(0, 0.4), pt(10, 0.4)))

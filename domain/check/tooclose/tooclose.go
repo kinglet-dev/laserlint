@@ -25,6 +25,9 @@ func New() Check { return Check{} }
 // ID is the check's stable id.
 func (Check) ID() string { return "lines-too-close" }
 
+// Name is the check's name for people.
+func (Check) Name() string { return "Lines too close" }
+
 // Run reports scored line too close to other scored line: as information
 // below the warning level, a warning from it, and a problem over the limit.
 // The share is compared as shown, to 0.1%, so the report never disagrees
