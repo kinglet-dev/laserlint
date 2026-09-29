@@ -11,6 +11,7 @@ import (
 type piece struct {
 	line   int
 	a, b   geom.Point
+	mid    geom.Point
 	arc    float64 // distance along the line to a, mm
 	length float64
 }
@@ -63,6 +64,7 @@ func newIndex(lines []geom.Polyline, step, minDistance float64) *index {
 		for k := 0; k < n; k++ {
 			p := piece{line: line, a: lerp(a, b, float64(k)/float64(n)), b: lerp(a, b, float64(k+1)/float64(n)),
 				arc: idx.lines[line].perimeter, length: length / float64(n)}
+			p.mid = lerp(p.a, p.b, 0.5)
 			idx.lines[line].perimeter += p.length
 			idx.add(p)
 		}
@@ -73,8 +75,7 @@ func newIndex(lines []geom.Polyline, step, minDistance float64) *index {
 // add stores a piece in the cell holding its midpoint, so each piece is in
 // exactly one cell and a query never meets it twice.
 func (idx *index) add(p piece) {
-	m := lerp(p.a, p.b, 0.5)
-	k := [2]int{idx.key(m.X), idx.key(m.Y)}
+	k := [2]int{idx.key(p.mid.X), idx.key(p.mid.Y)}
 	idx.cells[k] = append(idx.cells[k], int32(len(idx.pieces)))
 	idx.pieces = append(idx.pieces, p)
 }

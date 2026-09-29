@@ -11,17 +11,30 @@ import (
 // same line within the window either side (measured along the line) is
 // not "other" line.
 func (idx *index) nearest(pc piece) float64 {
-	p := lerp(pc.a, pc.b, 0.5)
+	p := pc.mid
 	at := pc.arc + pc.length/2
 	best := math.Inf(1)
 	for x := idx.key(p.X) - 1; x <= idx.key(p.X)+1; x++ {
 		for y := idx.key(p.Y) - 1; y <= idx.key(p.Y)+1; y++ {
 			for _, id := range idx.cells[[2]int{x, y}] {
-				best = math.Min(best, idx.distance(p, at, pc.line, idx.pieces[id]))
+				if q := &idx.pieces[id]; !idx.skip(p, at, pc.line, q) {
+					best = math.Min(best, idx.distance(p, at, pc.line, *q))
+				}
 			}
 		}
 	}
 	return best
+}
+
+// skip is a cheap early exit: q is out of reach even at its ends, or lies
+// wholly inside the same-line window (on a closed line the window only
+// grows by wrapping round, so this holds there too).
+func (idx *index) skip(p geom.Point, at float64, line int, q *piece) bool {
+	dx, dy, r := q.mid.X-p.X, q.mid.Y-p.Y, idx.reach+q.length/2
+	if dx*dx+dy*dy >= r*r {
+		return true
+	}
+	return q.line == line && q.arc >= at-idx.window && q.arc+q.length <= at+idx.window
 }
 
 // distance is the nearest distance from p to the part of q within reach
