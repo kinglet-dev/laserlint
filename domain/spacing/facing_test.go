@@ -11,7 +11,7 @@ import (
 // facing collects what Facing reports, with a 0.7 mm reach.
 func facing(lines ...geom.Polyline) (from, to []geom.Point, length float64) {
 	p := spacing.Params{MinDistance: 0.7, Step: 0.01, MaxSamples: 1_000_000}
-	err := spacing.Facing(lines, p, func(f, t geom.Point, l float64) {
+	_, err := spacing.Facing(lines, p, func(f, t geom.Point, l float64) {
 		from, to, length = append(from, f), append(to, t), length+l
 	})
 	Expect(err).NotTo(HaveOccurred())
@@ -48,6 +48,16 @@ var _ = Describe("Facing finds, for each stretch of line, the nearest other line
 		Expect(length).To(BeNumerically("<=", 21))
 	})
 
+	It("returns the total length of line, closing sides included", func() {
+		// Act
+		total, err := spacing.Facing([]geom.Polyline{loop(pt(0, 0), pt(10, 0), pt(10, 10)), line(pt(0, 20), pt(5, 20))},
+			params, func(_, _ geom.Point, _ float64) {})
+
+		// Assert
+		Expect(err).NotTo(HaveOccurred())
+		Expect(total).To(BeNumerically("~", 20+10*1.4142135623730951+5, 1e-9))
+	})
+
 	It("reports nothing for lines further apart than the reach", func() {
 		// Act
 		from, _, _ := facing(line(pt(0, 0), pt(10, 0)), line(pt(0, 0.8), pt(10, 0.8)))
@@ -58,7 +68,7 @@ var _ = Describe("Facing finds, for each stretch of line, the nearest other line
 
 	It("refuses more samples than the limit", func() {
 		// Act
-		err := spacing.Facing([]geom.Polyline{line(pt(0, 0), pt(10, 0))},
+		_, err := spacing.Facing([]geom.Polyline{line(pt(0, 0), pt(10, 0))},
 			spacing.Params{MinDistance: 0.7, Step: 0.01, MaxSamples: 10}, func(_, _ geom.Point, _ float64) {})
 
 		// Assert

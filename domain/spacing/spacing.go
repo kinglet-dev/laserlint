@@ -70,16 +70,19 @@ func build(lines []geom.Polyline, p Params) (*index, error) {
 
 // Facing calls visit for every sample of line with other line within
 // MinDistance, the same rule as Measure: from is the sample, to the
-// nearest point of other line, and length how much line the sample stands for.
-func Facing(lines []geom.Polyline, p Params, visit func(from, to geom.Point, length float64)) error {
+// nearest point of other line, and length how much line the sample stands
+// for. It returns the total length of line, as Measure's Scored.
+func Facing(lines []geom.Polyline, p Params, visit func(from, to geom.Point, length float64)) (float64, error) {
 	idx, err := build(lines, p)
 	if err != nil {
-		return err
+		return 0, err
 	}
+	total := 0.0
 	for _, pc := range idx.pieces {
+		total += pc.length
 		if d, q := idx.nearest(pc); d < p.MinDistance {
 			visit(pc.mid, q, pc.length)
 		}
 	}
-	return nil
+	return total, nil
 }
