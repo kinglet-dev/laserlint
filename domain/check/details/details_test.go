@@ -87,7 +87,7 @@ var _ = Describe("The small-details check", func() {
 
 		// Assert
 		Expect(f[0].Severity).To(Equal(check.Warning))
-		Expect(f[0].Message).To(HavePrefix("20 closed shapes under 0.50 mm across"))
+		Expect(f[0].Message).To(HavePrefix("20 closed shapes under 0.50 mm across burn as dots (problem above 20)"))
 	})
 
 	It("reports more small shapes than the limit as a problem", func() {

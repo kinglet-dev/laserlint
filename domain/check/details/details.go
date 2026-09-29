@@ -46,8 +46,8 @@ func (c Check) Run(in check.Input, s check.Settings) ([]check.Finding, error) {
 	f := check.Finding{
 		Check:    c.ID(),
 		Severity: check.Warning,
-		Message: fmt.Sprintf("%s under %.2f mm across burns as a dot (problem above %d); smallest %.2f mm",
-			shapes(len(small)), s.Detail, s.MaxDetails, small[0].Diameter),
+		Message: fmt.Sprintf("%s (problem above %d); smallest %.2f mm",
+			shapes(len(small), s.Detail), s.MaxDetails, small[0].Diameter),
 		Fix:       fmt.Sprintf("Delete specks and slivers, or enlarge details to at least %.2f mm across; where overlapping shapes leave slivers, combine them (Inkscape: Path → Union).", s.Detail),
 		Locations: centres(small),
 	}
@@ -57,11 +57,11 @@ func (c Check) Run(in check.Input, s check.Settings) ([]check.Finding, error) {
 	return []check.Finding{f}, nil
 }
 
-func shapes(n int) string {
+func shapes(n int, detail float64) string {
 	if n == 1 {
-		return "1 closed shape"
+		return fmt.Sprintf("1 closed shape under %.2f mm across burns as a dot", detail)
 	}
-	return fmt.Sprintf("%d closed shapes", n)
+	return fmt.Sprintf("%d closed shapes under %.2f mm across burn as dots", n, detail)
 }
 
 func centres(circles []enclose.Circle) []geom.Point {
