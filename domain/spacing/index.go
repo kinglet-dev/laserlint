@@ -26,7 +26,8 @@ type index struct {
 	pieces []piece
 	lines  []lineInfo
 	cells  map[[2]int][]int32
-	cell   float64 // cell size = minimum distance, so a query spans 3 × 3 cells
+	reach  float64 // the minimum distance: how far a query looks
+	cell   float64 // reach + step: every piece within reach has its midpoint in the 3 × 3 cells around
 	window float64 // same-line length ignored either side of a point
 }
 
@@ -53,7 +54,7 @@ func sampleCount(lines []geom.Polyline, step float64) int {
 
 func newIndex(lines []geom.Polyline, step, minDistance float64) *index {
 	idx := &index{lines: make([]lineInfo, len(lines)), cells: map[[2]int][]int32{},
-		cell: minDistance, window: math.Pi / 2 * minDistance}
+		reach: minDistance, cell: minDistance + step, window: math.Pi / 2 * minDistance}
 	for i, l := range lines {
 		idx.lines[i].closed = l.Closed
 	}
@@ -69,17 +70,13 @@ func newIndex(lines []geom.Polyline, step, minDistance float64) *index {
 	return idx
 }
 
-// add stores a piece in every cell its bounding box touches.
+// add stores a piece in the cell holding its midpoint, so each piece is in
+// exactly one cell and a query never meets it twice.
 func (idx *index) add(p piece) {
-	id := int32(len(idx.pieces))
+	m := lerp(p.a, p.b, 0.5)
+	k := [2]int{idx.key(m.X), idx.key(m.Y)}
+	idx.cells[k] = append(idx.cells[k], int32(len(idx.pieces)))
 	idx.pieces = append(idx.pieces, p)
-	x0, y0 := idx.key(math.Min(p.a.X, p.b.X)), idx.key(math.Min(p.a.Y, p.b.Y))
-	x1, y1 := idx.key(math.Max(p.a.X, p.b.X)), idx.key(math.Max(p.a.Y, p.b.Y))
-	for x := x0; x <= x1; x++ {
-		for y := y0; y <= y1; y++ {
-			idx.cells[[2]int{x, y}] = append(idx.cells[[2]int{x, y}], id)
-		}
-	}
 }
 
 func (idx *index) key(v float64) int { return int(math.Floor(v / idx.cell)) }

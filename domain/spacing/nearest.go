@@ -7,31 +7,27 @@ import (
 )
 
 // nearest is the distance from a piece's midpoint to the nearest other
-// scored line within the cell size, or +Inf when there is none. Line on the
+// scored line within reach, or +Inf when there is none. Line on the
 // same line within the window either side (measured along the line) is
 // not "other" line.
 func (idx *index) nearest(pc piece) float64 {
 	p := lerp(pc.a, pc.b, 0.5)
 	at := pc.arc + pc.length/2
 	best := math.Inf(1)
-	seen := map[int32]bool{}
 	for x := idx.key(p.X) - 1; x <= idx.key(p.X)+1; x++ {
 		for y := idx.key(p.Y) - 1; y <= idx.key(p.Y)+1; y++ {
 			for _, id := range idx.cells[[2]int{x, y}] {
-				if !seen[id] {
-					seen[id] = true
-					best = math.Min(best, idx.distance(p, at, pc.line, idx.pieces[id]))
-				}
+				best = math.Min(best, idx.distance(p, at, pc.line, idx.pieces[id]))
 			}
 		}
 	}
 	return best
 }
 
-// distance is the nearest distance from p to the part of q within the cell
-// size that counts as other line, or +Inf.
+// distance is the nearest distance from p to the part of q within reach
+// that counts as other line, or +Inf.
 func (idx *index) distance(p geom.Point, at float64, line int, q piece) float64 {
-	u0, u1, ok := within(p, q.a, q.b, idx.cell)
+	u0, u1, ok := within(p, q.a, q.b, idx.reach)
 	if !ok {
 		return math.Inf(1)
 	}

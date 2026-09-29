@@ -118,6 +118,20 @@ var _ = Describe("Measure finds scored line that runs too close to other scored 
 		Expect(r.Close).To(BeZero())
 	})
 
+	It("finds other line whose end is within reach even when its midpoint is far, at a coarse step", func() {
+		// Arrange: with a 1 mm step the second line is one piece with its
+		// midpoint 0.82 mm away, but its end is 0.34 mm from the first line.
+		p := params
+		p.Step = 1
+
+		// Act
+		r, err := spacing.Measure([]geom.Polyline{line(pt(-0.15, 0), pt(0.15, 0)), line(pt(0.34, 0), pt(1.3, 0))}, p)
+
+		// Assert: the first line's single sample, at the origin, is too close.
+		Expect(err).NotTo(HaveOccurred())
+		Expect(r.Close).To(BeNumerically("~", 0.3, 1e-9))
+	})
+
 	It("refuses more samples than the limit", func() {
 		// Arrange
 		p := params
