@@ -30,14 +30,15 @@ type Finding struct {
 
 // Settings are the physical limits the checks apply, in millimetres.
 type Settings struct {
-	Line     float64 // width of a scored line
-	Gap      float64 // minimum clear gap between the edges of two lines
-	Detail   float64 // smallest closed shape that survives, across
-	MaxClose float64 // largest share (0–1) of scored line allowed too close
+	Line      float64 // width of a scored line
+	Gap       float64 // minimum clear gap between the edges of two lines
+	Detail    float64 // smallest closed shape that survives, across
+	MaxClose  float64 // largest share (0–1) of scored line allowed too close
+	WarnClose float64 // share (0–1) of scored line too close from which to warn
 }
 
 // DefaultSettings suit xTool D1 Pro and P2 diode lasers on plywood.
-var DefaultSettings = Settings{Line: 0.10, Gap: 0.25, Detail: 0.5, MaxClose: 0.10}
+var DefaultSettings = Settings{Line: 0.10, Gap: 0.25, Detail: 0.5, MaxClose: 0.10, WarnClose: 0.01}
 
 // Input is what every check looks at.
 type Input struct {

@@ -57,6 +57,42 @@ var _ = Describe("The lines-too-close check", func() {
 		Expect(f[0].Fix).NotTo(BeEmpty())
 	})
 
+	It("only notes close spots below the warning level", func() {
+		// Arrange: 2 mm of close line among 302 mm is 0.7%.
+		lines := append(pair(0), line(pt(0, 50), pt(300, 50)))
+
+		// Act
+		f := run(lines...)
+
+		// Assert
+		Expect(f[0].Severity).To(Equal(check.Info))
+		Expect(f[0].Locations).NotTo(BeEmpty())
+	})
+
+	It("warns from exactly the warning level", func() {
+		// Arrange: 2 mm close of 200 mm in all is exactly 1%.
+		lines := append(pair(0), line(pt(0, 50), pt(198, 50)))
+
+		// Act
+		f := run(lines...)
+
+		// Assert
+		Expect(f[0].Severity).To(Equal(check.Warning))
+	})
+
+	It("takes the warning level from the settings", func() {
+		// Arrange: 2.0% close, with warnings only from 5%.
+		s := check.DefaultSettings
+		s.WarnClose = 0.05
+
+		// Act
+		f, err := tooclose.New().Run(check.Input{Lines: append(pair(0), line(pt(0, 50), pt(100, 50)))}, s)
+
+		// Assert
+		Expect(err).NotTo(HaveOccurred())
+		Expect(f[0].Severity).To(Equal(check.Info))
+	})
+
 	It("reports a problem when the close share is over the limit", func() {
 		// Act
 		f := run(pair(0)...)
