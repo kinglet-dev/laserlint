@@ -26,7 +26,13 @@ type Params struct {
 type Result struct {
 	Crossings []geom.Point // where lines cross, or one ends on another
 	Stacked   float64      // length of line lying on other line, mm
-	StackedAt []geom.Point // middle of each stacked stretch
+	Stacks    []Stack      // each stretch of line lying on other line
+}
+
+// Stack is one stretch of line lying on other line.
+type Stack struct {
+	At     geom.Point // its middle
+	Length float64    // mm
 }
 
 // ErrTooComplex means the design has too much line to search within the limits.
@@ -51,7 +57,7 @@ func Find(lines []geom.Polyline, p Params) (Result, error) {
 		hits = append(hits, rel.points...)
 		if rel.overlap > 0 {
 			r.Stacked += rel.overlap
-			r.StackedAt = append(r.StackedAt, rel.overlapAt)
+			r.Stacks = append(r.Stacks, Stack{At: rel.overlapAt, Length: rel.overlap})
 		}
 	})
 	r.Crossings = merge(hits, p.Merge)

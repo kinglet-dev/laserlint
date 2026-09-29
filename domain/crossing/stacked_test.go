@@ -17,9 +17,10 @@ var _ = Describe("Find measures line drawn on top of other line, within its limi
 		// Assert
 		Expect(r.Crossings).To(BeEmpty())
 		Expect(r.Stacked).To(BeNumerically("~", 10, 1e-9))
-		Expect(r.StackedAt).To(HaveLen(1))
-		Expect(r.StackedAt[0].X).To(BeNumerically("~", 3, 1e-9))
-		Expect(r.StackedAt[0].Y).To(BeNumerically("~", 4, 1e-9))
+		Expect(r.Stacks).To(HaveLen(1))
+		Expect(r.Stacks[0].Length).To(BeNumerically("~", 10, 1e-9))
+		Expect(r.Stacks[0].At.X).To(BeNumerically("~", 3, 1e-9))
+		Expect(r.Stacks[0].At.Y).To(BeNumerically("~", 4, 1e-9))
 	})
 
 	It("measures only the part of two lines that lies on each other", func() {
@@ -44,7 +45,7 @@ var _ = Describe("Find measures line drawn on top of other line, within its limi
 		r := find(line(pt(0, 0), pt(5, 0)), line(pt(5-1e-9, 0), pt(9, 0)))
 
 		// Assert
-		Expect(r.StackedAt).To(BeEmpty())
+		Expect(r.Stacks).To(BeEmpty())
 	})
 
 	It("doesn't mistake a repeated point on a stacked line for a crossing", func() {
