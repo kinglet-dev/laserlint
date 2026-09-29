@@ -1,5 +1,5 @@
 // Command laserlint checks an SVG for laser score lines that are too close
-// together or packed too densely. This is the composition root: it only
+// together, packed too densely, or crossing. This is the composition root: it only
 // wires the parts together.
 package main
 
@@ -10,6 +10,7 @@ import (
 	"github.com/kinglet-dev/laserlint/adapters/files"
 	"github.com/kinglet-dev/laserlint/adapters/svg/reader"
 	"github.com/kinglet-dev/laserlint/app"
+	"github.com/kinglet-dev/laserlint/domain/check/crossings"
 	"github.com/kinglet-dev/laserlint/domain/check/dense"
 	"github.com/kinglet-dev/laserlint/domain/check/tooclose"
 )
@@ -24,7 +25,7 @@ func main() {
 		Stderr:  os.Stderr,
 		Open:    files.Open,
 		Read:    reader.Read,
-		Checker: app.NewChecker(tooclose.New(), dense.New()),
+		Checker: app.NewChecker(tooclose.New(), crossings.New(), dense.New()),
 		Version: version,
 	}))
 }

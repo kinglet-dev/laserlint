@@ -45,6 +45,9 @@ type settings struct {
 
 	WarnDensity float64 `json:"warn_density"`
 	MaxDensity  float64 `json:"max_density"`
+
+	MaxCrossings int     `json:"max_crossings"`
+	MaxStacked   float64 `json:"max_stacked_mm"`
 }
 
 type ran struct {
@@ -87,7 +90,8 @@ func (Format) Write(w io.Writer, a report.About, r app.Report) error {
 		Tool:   tool{Name: "laserlint", Version: a.Version},
 		Input:  input{Name: a.Input, Width: mm(r.Width), Height: mm(r.Height)},
 		Settings: settings{Line: r.Settings.Line, Gap: r.Settings.Gap, WarnClose: r.Settings.WarnClose, MaxClose: r.Settings.MaxClose,
-			WarnDensity: r.Settings.WarnDensity, MaxDensity: r.Settings.MaxDensity},
+			WarnDensity: r.Settings.WarnDensity, MaxDensity: r.Settings.MaxDensity,
+			MaxCrossings: r.Settings.MaxCrossings, MaxStacked: r.Settings.MaxStacked},
 		Checks:   []ran{},
 		Findings: []finding{},
 		Summary: summary{Ready: r.Ready(), Problems: r.Count(check.Problem),

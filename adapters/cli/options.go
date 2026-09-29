@@ -32,6 +32,8 @@ func parse(args []string) (options, error) {
 	maxClose := fs.String("max-close", "10%", "")
 	warnDensity := fs.String("warn-density", "0.9", "")
 	maxDensity := fs.String("max-density", "2", "")
+	maxCrossings := fs.String("max-crossings", "50", "")
+	maxStacked := fs.String("max-stacked", "2mm", "")
 	var o options
 	fs.BoolVar(&o.json, "json", false, "")
 	fs.BoolVar(&o.version, "version", false, "")
@@ -63,6 +65,12 @@ func parse(args []string) (options, error) {
 	}
 	if err == nil && s.WarnDensity > s.MaxDensity {
 		err = errors.New("--warn-density must not be more than --max-density")
+	}
+	if err == nil {
+		s.MaxCrossings, err = count("--max-crossings", *maxCrossings)
+	}
+	if err == nil {
+		s.MaxStacked, err = length("--max-stacked", *maxStacked)
 	}
 	if err == nil && fs.NArg() != 1 {
 		err = errors.New("give one SVG file to check, or - to read standard input")
@@ -98,6 +106,15 @@ func positive(flag, value string) (float64, error) {
 	v, err := strconv.ParseFloat(value, 64)
 	if err != nil || !(v > 0) || math.IsInf(v, 1) {
 		return 0, fmt.Errorf("%s: write a positive number of mm of line per mm², such as 2", flag)
+	}
+	return v, nil
+}
+
+// count reads a whole number of zero or more.
+func count(flag, value string) (int, error) {
+	v, err := strconv.Atoi(value)
+	if err != nil || v < 0 {
+		return 0, fmt.Errorf("%s: write a whole number of crossings, such as 50", flag)
 	}
 	return v, nil
 }

@@ -19,6 +19,7 @@ var _ = Describe("The laserlint binary", func() {
 		Expect(out).To(ContainSubstring("· 20.0 × 20.0 mm · line 0.10 mm · gap 0.25 mm"))
 		Expect(out).To(ContainSubstring("OK       Lines too close"))
 		Expect(out).To(ContainSubstring("INFO     Density"))
+		Expect(out).To(ContainSubstring("OK       Crossings"))
 		Expect(out).To(HaveSuffix("Ready to burn, with 1 info.\n"))
 		Expect(errOut).To(BeEmpty())
 	})
@@ -35,6 +36,19 @@ var _ = Describe("The laserlint binary", func() {
 		Expect(out).To(ContainSubstring("PROBLEM  Lines too close"))
 		Expect(out).To(ContainSubstring("100.0% of scored line is within 0.35 mm"))
 		Expect(out).To(HaveSuffix("Not ready to burn: 1 problem and 1 info.\n"))
+	})
+
+	It("warns about crossing lines but still passes, exiting 0", func() {
+		// Arrange: an X of two hairlines.
+		path := file("cross.svg", svg(`<g fill="none" stroke="#000"><path d="M2 2 L18 18"/><path d="M2 18 L18 2"/></g>`))
+
+		// Act
+		out, _, code := laserlint("", path)
+
+		// Assert
+		Expect(code).To(Equal(0))
+		Expect(out).To(ContainSubstring("WARNING  Crossings"))
+		Expect(out).To(ContainSubstring("Where: (10.0, 10.0) mm from the top-left"))
 	})
 
 	It("reads standard input and writes JSON", func() {

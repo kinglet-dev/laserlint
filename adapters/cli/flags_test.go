@@ -53,6 +53,16 @@ var _ = Describe("laserlint's flags", func() {
 		Expect(w.checker.settings.MaxDensity).To(Equal(3.0))
 	})
 
+	It("takes the crossings limit as a count and the stacked limit as a length", func() {
+		// Act
+		code := w.run("--max-crossings", "0", "--max-stacked", "0.1in", "coaster.svg")
+
+		// Assert
+		Expect(code).To(Equal(0))
+		Expect(w.checker.settings.MaxCrossings).To(Equal(0))
+		Expect(w.checker.settings.MaxStacked).To(BeNumerically("~", 2.54, 1e-12))
+	})
+
 	DescribeTable("refuses bad values with a message that says how to fix them, exiting 2",
 		func(args []string, want string) {
 			// Act
@@ -74,6 +84,9 @@ var _ = Describe("laserlint's flags", func() {
 		Entry("an infinite density", []string{"--max-density", "Inf"}, "--max-density: write a positive number of mm of line per mm², such as 2"),
 		Entry("a zero density", []string{"--warn-density", "0"}, "--warn-density: write a positive number of mm of line per mm², such as 2"),
 		Entry("a density warning above the limit", []string{"--warn-density", "3", "--max-density", "2"}, "--warn-density must not be more than --max-density"),
+		Entry("a crossings limit that isn't a whole number", []string{"--max-crossings", "2.5"}, "--max-crossings: write a whole number of crossings, such as 50"),
+		Entry("a negative crossings limit", []string{"--max-crossings", "-1"}, "--max-crossings: write a whole number of crossings, such as 50"),
+		Entry("a stacked limit without a unit", []string{"--max-stacked", "2"}, "--max-stacked: length has no unit"),
 		Entry("an unknown flag", []string{"--colour"}, "flag provided but not defined: -colour"),
 	)
 
@@ -106,6 +119,8 @@ var _ = Describe("laserlint's flags", func() {
 		Expect(w.stdout.String()).To(ContainSubstring("Examples:"))
 		Expect(w.stdout.String()).To(ContainSubstring("--max-close"))
 		Expect(w.stdout.String()).To(ContainSubstring("--max-density"))
+		Expect(w.stdout.String()).To(ContainSubstring("--max-crossings"))
+		Expect(w.stdout.String()).To(ContainSubstring("--max-stacked"))
 		Expect(w.stderr.String()).To(BeEmpty())
 	})
 
