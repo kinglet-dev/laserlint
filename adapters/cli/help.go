@@ -1,8 +1,8 @@
 package cli
 
 // help is laserlint's usage text.
-const help = `laserlint checks an SVG for laser score lines that are too close together
-or packed too densely.
+const help = `laserlint checks an SVG for laser score lines that are too close together,
+packed too densely, or crossing.
 
 Usage:
   laserlint [flags] FILE
@@ -20,6 +20,10 @@ Flags:
                        per mm² (default 0.9, lines about 1.1 mm apart)
   --max-density N      a problem above N mm of line per mm² (default 2, lines
                        about 0.5 mm apart)
+  --max-crossings N    a problem when score lines cross in more than N places
+                       (default 50)
+  --max-stacked LENGTH a problem when more than this length of line lies on
+                       other line (default 2mm)
   --json               write the report as JSON (kinglet.report/v1)
   --version            show the version
   -h, --help           show this help
