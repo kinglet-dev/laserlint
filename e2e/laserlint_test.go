@@ -18,7 +18,8 @@ var _ = Describe("The laserlint binary", func() {
 		Expect(out).To(ContainSubstring("laserlint 0.0.0-test · "))
 		Expect(out).To(ContainSubstring("· 20.0 × 20.0 mm · line 0.10 mm · gap 0.25 mm"))
 		Expect(out).To(ContainSubstring("OK       Lines too close"))
-		Expect(out).To(HaveSuffix("Ready to burn.\n"))
+		Expect(out).To(ContainSubstring("INFO     Density"))
+		Expect(out).To(HaveSuffix("Ready to burn, with 1 info.\n"))
 		Expect(errOut).To(BeEmpty())
 	})
 
@@ -33,7 +34,7 @@ var _ = Describe("The laserlint binary", func() {
 		Expect(code).To(Equal(1))
 		Expect(out).To(ContainSubstring("PROBLEM  Lines too close"))
 		Expect(out).To(ContainSubstring("100.0% of scored line is within 0.35 mm"))
-		Expect(out).To(HaveSuffix("Not ready to burn: 1 problem.\n"))
+		Expect(out).To(HaveSuffix("Not ready to burn: 1 problem and 1 info.\n"))
 	})
 
 	It("reads standard input and writes JSON", func() {

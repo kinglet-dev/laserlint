@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"math"
 	"strconv"
 	"strings"
 
@@ -29,6 +30,8 @@ func parse(args []string) (options, error) {
 	gap := fs.String("gap", "0.25mm", "")
 	warnClose := fs.String("warn-close", "1%", "")
 	maxClose := fs.String("max-close", "10%", "")
+	warnDensity := fs.String("warn-density", "0.9", "")
+	maxDensity := fs.String("max-density", "2", "")
 	var o options
 	fs.BoolVar(&o.json, "json", false, "")
 	fs.BoolVar(&o.version, "version", false, "")
@@ -51,6 +54,15 @@ func parse(args []string) (options, error) {
 	}
 	if err == nil && s.WarnClose > s.MaxClose {
 		err = errors.New("--warn-close must not be more than --max-close")
+	}
+	if err == nil {
+		s.WarnDensity, err = positive("--warn-density", *warnDensity)
+	}
+	if err == nil {
+		s.MaxDensity, err = positive("--max-density", *maxDensity)
+	}
+	if err == nil && s.WarnDensity > s.MaxDensity {
+		err = errors.New("--warn-density must not be more than --max-density")
 	}
 	if err == nil && fs.NArg() != 1 {
 		err = errors.New("give one SVG file to check, or - to read standard input")
@@ -79,4 +91,13 @@ func percent(flag, value string) (float64, error) {
 		return 0, fmt.Errorf("%s: write a percentage from 0%% to 100%%", flag)
 	}
 	return v / 100, nil
+}
+
+// positive reads a density in mm of line per mm²: a finite number above zero.
+func positive(flag, value string) (float64, error) {
+	v, err := strconv.ParseFloat(value, 64)
+	if err != nil || !(v > 0) || math.IsInf(v, 1) {
+		return 0, fmt.Errorf("%s: write a positive number of mm of line per mm², such as 2", flag)
+	}
+	return v, nil
 }

@@ -43,6 +43,16 @@ var _ = Describe("laserlint's flags", func() {
 		Expect(w.checker.settings.MaxClose).To(BeNumerically("~", 0.20, 1e-12))
 	})
 
+	It("takes the density levels as mm of line per mm²", func() {
+		// Act
+		code := w.run("--warn-density", "1.2", "--max-density", "3", "coaster.svg")
+
+		// Assert
+		Expect(code).To(Equal(0))
+		Expect(w.checker.settings.WarnDensity).To(Equal(1.2))
+		Expect(w.checker.settings.MaxDensity).To(Equal(3.0))
+	})
+
 	DescribeTable("refuses bad values with a message that says how to fix them, exiting 2",
 		func(args []string, want string) {
 			// Act
@@ -60,6 +70,10 @@ var _ = Describe("laserlint's flags", func() {
 		Entry("a percentage over 100%", []string{"--warn-close", "150%"}, "--warn-close: write a percentage from 0% to 100%"),
 		Entry("a percentage that isn't a number", []string{"--max-close", "lots%"}, "--max-close: write a percentage such as 10%"),
 		Entry("a warning level above the limit", []string{"--warn-close", "20%", "--max-close", "10%"}, "--warn-close must not be more than --max-close"),
+		Entry("a density that isn't a number", []string{"--max-density", "2mm"}, "--max-density: write a positive number of mm of line per mm², such as 2"),
+		Entry("an infinite density", []string{"--max-density", "Inf"}, "--max-density: write a positive number of mm of line per mm², such as 2"),
+		Entry("a zero density", []string{"--warn-density", "0"}, "--warn-density: write a positive number of mm of line per mm², such as 2"),
+		Entry("a density warning above the limit", []string{"--warn-density", "3", "--max-density", "2"}, "--warn-density must not be more than --max-density"),
 		Entry("an unknown flag", []string{"--colour"}, "flag provided but not defined: -colour"),
 	)
 
@@ -91,6 +105,7 @@ var _ = Describe("laserlint's flags", func() {
 		Expect(w.stdout.String()).To(ContainSubstring("Usage:"))
 		Expect(w.stdout.String()).To(ContainSubstring("Examples:"))
 		Expect(w.stdout.String()).To(ContainSubstring("--max-close"))
+		Expect(w.stdout.String()).To(ContainSubstring("--max-density"))
 		Expect(w.stderr.String()).To(BeEmpty())
 	})
 
