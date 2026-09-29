@@ -7,14 +7,19 @@ import (
 	"math"
 
 	"github.com/kinglet-dev/laserlint/domain/check"
+	"github.com/kinglet-dev/laserlint/domain/geom"
 	"github.com/kinglet-dev/laserlint/domain/spacing"
 )
 
 // maxSamples bounds the work on huge designs (threat model: 5,000,000).
 const maxSamples = 5_000_000
 
-// maxLocations is how many of the nearest spots a finding lists.
+// maxLocations is how many of the nearest places a finding lists.
 const maxLocations = 5
+
+// samePlace is how near two spots are to count as one place, in mm: both
+// lines of a close pair report the same place.
+const samePlace = 1.0
 
 // Check is the lines-too-close check.
 type Check struct{}
@@ -52,8 +57,29 @@ func (c Check) Run(in check.Input, s check.Settings) ([]check.Finding, error) {
 	if percent > 100*s.MaxClose {
 		f.Severity = check.Problem
 	}
-	for i := 0; i < len(r.Spots) && i < maxLocations; i++ {
-		f.Locations = append(f.Locations, r.Spots[i].At)
-	}
+	f.Locations = places(r.Spots)
 	return []check.Finding{f}, nil
+}
+
+// places lists the nearest spots, each place once.
+func places(spots []spacing.Spot) []geom.Point {
+	var out []geom.Point
+	for _, s := range spots {
+		if len(out) == maxLocations {
+			break
+		}
+		if !listed(out, s.At) {
+			out = append(out, s.At)
+		}
+	}
+	return out
+}
+
+func listed(points []geom.Point, p geom.Point) bool {
+	for _, q := range points {
+		if math.Hypot(q.X-p.X, q.Y-p.Y) < samePlace {
+			return true
+		}
+	}
+	return false
 }

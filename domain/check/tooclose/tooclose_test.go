@@ -150,6 +150,14 @@ var _ = Describe("The lines-too-close check", func() {
 		Expect(f[0].Locations[0].X).To(BeNumerically("~", 30.5, 0.5))
 	})
 
+	It("lists each place once, though both lines of a close pair report it", func() {
+		// Act
+		f := run(pair(0)...)
+
+		// Assert
+		Expect(f[0].Locations).To(HaveLen(1))
+	})
+
 	It("passes on a design too large to measure as an error", func() {
 		// Act
 		_, err := tooclose.New().Run(check.Input{Lines: []geom.Polyline{line(pt(0, 0), pt(300_000, 0))}}, check.DefaultSettings)
