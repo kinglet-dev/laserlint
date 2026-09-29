@@ -2,8 +2,9 @@ package cli
 
 // help is laserlint's usage text.
 const help = `laserlint checks an SVG for laser score lines that are too close together,
-packed too densely, crossing, or too small to survive, and for white
-backgrounds that would burn a frame.
+packed too densely, crossing, or too small to survive; for white
+backgrounds that would burn a frame; and for line art drawn as thin filled
+strokes, which burns as double lines.
 
 Usage:
   laserlint [flags] FILE
