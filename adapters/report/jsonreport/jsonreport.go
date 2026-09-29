@@ -42,6 +42,9 @@ type settings struct {
 	Gap       float64 `json:"gap_mm"`
 	WarnClose float64 `json:"warn_close"`
 	MaxClose  float64 `json:"max_close"`
+
+	WarnDensity float64 `json:"warn_density"`
+	MaxDensity  float64 `json:"max_density"`
 }
 
 type ran struct {
@@ -80,10 +83,11 @@ func New() Format { return Format{} }
 // Write writes the report as indented JSON.
 func (Format) Write(w io.Writer, a report.About, r app.Report) error {
 	d := document{
-		Schema:   Schema,
-		Tool:     tool{Name: "laserlint", Version: a.Version},
-		Input:    input{Name: a.Input, Width: mm(r.Width), Height: mm(r.Height)},
-		Settings: settings{Line: r.Settings.Line, Gap: r.Settings.Gap, WarnClose: r.Settings.WarnClose, MaxClose: r.Settings.MaxClose},
+		Schema: Schema,
+		Tool:   tool{Name: "laserlint", Version: a.Version},
+		Input:  input{Name: a.Input, Width: mm(r.Width), Height: mm(r.Height)},
+		Settings: settings{Line: r.Settings.Line, Gap: r.Settings.Gap, WarnClose: r.Settings.WarnClose, MaxClose: r.Settings.MaxClose,
+			WarnDensity: r.Settings.WarnDensity, MaxDensity: r.Settings.MaxDensity},
 		Checks:   []ran{},
 		Findings: []finding{},
 		Summary: summary{Ready: r.Ready(), Problems: r.Count(check.Problem),

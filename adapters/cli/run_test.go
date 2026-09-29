@@ -79,6 +79,8 @@ var _ = Describe("laserlint FILE", func() {
 		Expect(w.checker.settings.Gap).To(Equal(0.25))
 		Expect(w.checker.settings.WarnClose).To(Equal(0.01))
 		Expect(w.checker.settings.MaxClose).To(Equal(0.10))
+		Expect(w.checker.settings.WarnDensity).To(Equal(0.9))
+		Expect(w.checker.settings.MaxDensity).To(Equal(2.0))
 	})
 })
 
