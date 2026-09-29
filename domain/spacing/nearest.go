@@ -7,23 +7,25 @@ import (
 )
 
 // nearest is the distance from a piece's midpoint to the nearest other
-// scored line within reach, or +Inf when there is none. Line on the
+// scored line within reach, and the point there; +Inf when there is none. Line on the
 // same line within the window either side (measured along the line) is
 // not "other" line.
-func (idx *index) nearest(pc piece) float64 {
+func (idx *index) nearest(pc piece) (float64, geom.Point) {
 	p := pc.mid
 	at := pc.arc + pc.length/2
-	best := math.Inf(1)
+	best, bestAt := math.Inf(1), geom.Point{}
 	for x := idx.key(p.X) - 1; x <= idx.key(p.X)+1; x++ {
 		for y := idx.key(p.Y) - 1; y <= idx.key(p.Y)+1; y++ {
 			for _, id := range idx.cells[[2]int{x, y}] {
 				if q := &idx.pieces[id]; !idx.skip(p, at, pc.line, q) {
-					best = math.Min(best, idx.distance(p, at, pc.line, *q))
+					if d, c := idx.distance(p, at, pc.line, *q); d < best {
+						best, bestAt = d, c
+					}
 				}
 			}
 		}
 	}
-	return best
+	return best, bestAt
 }
 
 // skip is a cheap early exit: q is out of reach even at its ends, or lies
@@ -38,23 +40,25 @@ func (idx *index) skip(p geom.Point, at float64, line int, q *piece) bool {
 }
 
 // distance is the nearest distance from p to the part of q within reach
-// that counts as other line, or +Inf.
-func (idx *index) distance(p geom.Point, at float64, line int, q piece) float64 {
+// that counts as other line, and the point there; or +Inf.
+func (idx *index) distance(p geom.Point, at float64, line int, q piece) (float64, geom.Point) {
+	best, bestAt := math.Inf(1), geom.Point{}
 	u0, u1, ok := within(p, q.a, q.b, idx.reach)
 	if !ok {
-		return math.Inf(1)
+		return best, bestAt
 	}
 	parts := [][2]float64{{q.arc + u0*q.length, q.arc + u1*q.length}}
 	if q.line == line {
 		parts = idx.outsideWindow(parts, at, idx.lines[line])
 	}
-	best := math.Inf(1)
 	for _, part := range parts {
 		u := clamp(closestU(p, q.a, q.b), (part[0]-q.arc)/q.length, (part[1]-q.arc)/q.length)
 		c := lerp(q.a, q.b, u)
-		best = math.Min(best, math.Hypot(c.X-p.X, c.Y-p.Y))
+		if d := math.Hypot(c.X-p.X, c.Y-p.Y); d < best {
+			best, bestAt = d, c
+		}
 	}
-	return best
+	return best, bestAt
 }
 
 // outsideWindow removes the stretch of the same line around at, going

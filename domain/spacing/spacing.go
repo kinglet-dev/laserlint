@@ -43,19 +43,43 @@ var ErrTooManySamples = errors.New("the design has too much line to measure")
 
 // Measure finds scored line that is too close to other scored line.
 func Measure(lines []geom.Polyline, p Params) (Result, error) {
-	if n := sampleCount(lines, p.Step); n > p.MaxSamples {
-		return Result{}, fmt.Errorf("%w: it needs %d samples, the limit is %d", ErrTooManySamples, n, p.MaxSamples)
+	idx, err := build(lines, p)
+	if err != nil {
+		return Result{}, err
 	}
-	idx := newIndex(lines, p.Step, p.MinDistance)
 	var r Result
 	near := make([]float64, len(idx.pieces))
 	for i, pc := range idx.pieces {
 		r.Scored += pc.length
-		near[i] = idx.nearest(pc)
+		near[i], _ = idx.nearest(pc)
 		if near[i] < p.MinDistance {
 			r.Close += pc.length
 		}
 	}
 	r.Spots = spots(idx.pieces, near, p.MinDistance)
 	return r, nil
+}
+
+// build indexes the lines, refusing more samples than the limit.
+func build(lines []geom.Polyline, p Params) (*index, error) {
+	if n := sampleCount(lines, p.Step); n > p.MaxSamples {
+		return nil, fmt.Errorf("%w: it needs %d samples, the limit is %d", ErrTooManySamples, n, p.MaxSamples)
+	}
+	return newIndex(lines, p.Step, p.MinDistance), nil
+}
+
+// Facing calls visit for every sample of line with other line within
+// MinDistance, the same rule as Measure: from is the sample, to the
+// nearest point of other line, and length how much line the sample stands for.
+func Facing(lines []geom.Polyline, p Params, visit func(from, to geom.Point, length float64)) error {
+	idx, err := build(lines, p)
+	if err != nil {
+		return err
+	}
+	for _, pc := range idx.pieces {
+		if d, q := idx.nearest(pc); d < p.MinDistance {
+			visit(pc.mid, q, pc.length)
+		}
+	}
+	return nil
 }
