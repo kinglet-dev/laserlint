@@ -53,6 +53,16 @@ var _ = Describe("laserlint's flags", func() {
 		Expect(w.checker.settings.MaxDensity).To(Equal(3.0))
 	})
 
+	It("takes the detail size as a length and the details limit as a count", func() {
+		// Act
+		code := w.run("--detail", "1mm", "--max-details", "5", "coaster.svg")
+
+		// Assert
+		Expect(code).To(Equal(0))
+		Expect(w.checker.settings.Detail).To(Equal(1.0))
+		Expect(w.checker.settings.MaxDetails).To(Equal(5))
+	})
+
 	It("takes the crossings limit as a count and the stacked limit as a length", func() {
 		// Act
 		code := w.run("--max-crossings", "0", "--max-stacked", "0.1in", "coaster.svg")
@@ -84,6 +94,9 @@ var _ = Describe("laserlint's flags", func() {
 		Entry("an infinite density", []string{"--max-density", "Inf"}, "--max-density: write a positive number of mm of line per mm², such as 2"),
 		Entry("a zero density", []string{"--warn-density", "0"}, "--warn-density: write a positive number of mm of line per mm², such as 2"),
 		Entry("a density warning above the limit", []string{"--warn-density", "3", "--max-density", "2"}, "--warn-density must not be more than --max-density"),
+		Entry("a detail size without a unit", []string{"--detail", "0.5"}, "--detail: length has no unit"),
+		Entry("a zero detail size", []string{"--detail", "0mm"}, "--detail must be more than zero"),
+		Entry("a details limit that isn't a whole number", []string{"--max-details", "few"}, "--max-details: write a whole number of shapes, such as 20"),
 		Entry("a crossings limit that isn't a whole number", []string{"--max-crossings", "2.5"}, "--max-crossings: write a whole number of crossings, such as 50"),
 		Entry("a negative crossings limit", []string{"--max-crossings", "-1"}, "--max-crossings: write a whole number of crossings, such as 50"),
 		Entry("a stacked limit without a unit", []string{"--max-stacked", "2"}, "--max-stacked: length has no unit"),
@@ -119,6 +132,7 @@ var _ = Describe("laserlint's flags", func() {
 		Expect(w.stdout.String()).To(ContainSubstring("Examples:"))
 		Expect(w.stdout.String()).To(ContainSubstring("--max-close"))
 		Expect(w.stdout.String()).To(ContainSubstring("--max-density"))
+		Expect(w.stdout.String()).To(ContainSubstring("--max-details"))
 		Expect(w.stdout.String()).To(ContainSubstring("--max-crossings"))
 		Expect(w.stdout.String()).To(ContainSubstring("--max-stacked"))
 		Expect(w.stderr.String()).To(BeEmpty())

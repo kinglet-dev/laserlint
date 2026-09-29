@@ -20,6 +20,7 @@ var _ = Describe("The laserlint binary", func() {
 		Expect(out).To(ContainSubstring("OK       Lines too close"))
 		Expect(out).To(ContainSubstring("INFO     Density"))
 		Expect(out).To(ContainSubstring("OK       Crossings"))
+		Expect(out).To(ContainSubstring("OK       Small details"))
 		Expect(out).To(HaveSuffix("Ready to burn, with 1 info.\n"))
 		Expect(errOut).To(BeEmpty())
 	})
@@ -49,6 +50,19 @@ var _ = Describe("The laserlint binary", func() {
 		Expect(code).To(Equal(0))
 		Expect(out).To(ContainSubstring("WARNING  Crossings"))
 		Expect(out).To(ContainSubstring("Where: (10.0, 10.0) mm from the top-left"))
+	})
+
+	It("warns about a speck but still passes, exiting 0", func() {
+		// Arrange: a 0.2 mm dot beside a clean square.
+		path := file("speck.svg", svg(`<rect x="2" y="2" width="10" height="10" fill="none" stroke="#000"/><circle cx="16" cy="16" r="0.1"/>`))
+
+		// Act
+		out, _, code := laserlint("", path)
+
+		// Assert
+		Expect(code).To(Equal(0))
+		Expect(out).To(ContainSubstring("WARNING  Small details"))
+		Expect(out).To(ContainSubstring("Where: (16.0, 16.0) mm from the top-left"))
 	})
 
 	It("reads standard input and writes JSON", func() {
