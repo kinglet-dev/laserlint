@@ -45,6 +45,14 @@ var _ = Describe("The background check", func() {
 		Expect(f).To(BeEmpty())
 	})
 
+	It("ignores a white shape with no outline", func() {
+		// Act: as from <path d="" fill="white"/>.
+		f := run(design.Shape{Filled: true, WhiteFill: true})
+
+		// Assert
+		Expect(f).To(BeEmpty())
+	})
+
 	It("warns about a white shape covering the design, and says to delete it", func() {
 		// Act
 		f := run(rect(0, 0, 100, 50, true), rect(10, 10, 5, 5, false))

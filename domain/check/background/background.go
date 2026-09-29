@@ -45,6 +45,9 @@ func (c Check) Run(in check.Input, _ check.Settings) ([]check.Finding, error) {
 			continue
 		}
 		b := bounds(s.Path)
+		if b.x0 > b.x1 {
+			continue // no outline: nothing is scored
+		}
 		if b.area() >= cover*in.Design.Width*in.Design.Height {
 			backgrounds = append(backgrounds, b)
 		} else {
