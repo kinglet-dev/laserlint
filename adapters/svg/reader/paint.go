@@ -43,9 +43,10 @@ func (p paint) visible() bool { return p.filled() || p.stroke != "none" }
 func (p paint) filled() bool { return p.fill != "none" }
 
 // white reports a white fill, which usually means a background shape.
+// Values are already lower case; spaces inside rgb() don't matter.
 func (p paint) white() bool {
-	switch p.fill {
-	case "#fff", "#ffffff", "white":
+	switch strings.ReplaceAll(p.fill, " ", "") {
+	case "#fff", "#ffffff", "white", "rgb(255,255,255)":
 		return true
 	}
 	return false

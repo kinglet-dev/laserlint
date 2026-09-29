@@ -106,6 +106,8 @@ var _ = DescribeTable("Read works out what the laser will score from fill and st
 	Entry("a white fill", `<path d="M0 0 L1 1" fill="#ffffff"/>`, true, true, true),
 	Entry("a short white hex", `<path d="M0 0 L1 1" fill="#FFF"/>`, true, true, true),
 	Entry("white by name", `<path d="M0 0 L1 1" fill="white"/>`, true, true, true),
+	Entry("white as rgb()", `<path d="M0 0 L1 1" fill="RGB(255, 255,255)"/>`, true, true, true),
+	Entry("a near-white isn't taken as white", `<path d="M0 0 L1 1" fill="rgb(255,255,254)"/>`, true, true, false),
 	Entry("the style attribute", `<path d="M0 0 L1 1" style="fill:none;stroke:#000000;stroke-width:0.1"/>`, true, false, false),
 	Entry("style wins over the attribute", `<path d="M0 0 L1 1" fill="#000" style="fill: none; stroke: red"/>`, true, false, false),
 	Entry("fill inherited from a group", `<g fill="none" stroke="#000"><path d="M0 0 L1 1"/></g>`, true, false, false),
