@@ -7,7 +7,9 @@ package main
 
 import (
 	"os"
+	"runtime/debug"
 
+	"github.com/kinglet-dev/laserlint/adapters/buildinfo"
 	"github.com/kinglet-dev/laserlint/adapters/cli"
 	"github.com/kinglet-dev/laserlint/adapters/files"
 	"github.com/kinglet-dev/laserlint/adapters/svg/reader"
@@ -20,7 +22,8 @@ import (
 	"github.com/kinglet-dev/laserlint/domain/check/tooclose"
 )
 
-// version is set at release time with -ldflags "-X main.version=…".
+// version is set at release time with -ldflags "-X main.version=…"; a
+// copy built with go install reports the module version Go recorded.
 var version = "dev"
 
 func main() {
@@ -31,6 +34,6 @@ func main() {
 		Open:    files.Open,
 		Read:    reader.Read,
 		Checker: app.NewChecker(tooclose.New(), crossings.New(), details.New(), dense.New(), background.New(), lineart.New()),
-		Version: version,
+		Version: buildinfo.Version(version, debug.ReadBuildInfo),
 	}))
 }
