@@ -63,3 +63,21 @@ jobs:
           go test ./domain/crossing -run '^$' -fuzz=FuzzFind -fuzztime=30s
           go test ./domain/enclose -run '^$' -fuzz=FuzzSmallest -fuzztime=30s
           go test ./domain/fill -run '^$' -fuzz=FuzzDark -fuzztime=30s
+
+  release-dry-run:
+    name: Release build (not published)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version-file: go.mod
+      - uses: anchore/sbom-action/download-syft@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
+      - uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
+        with:
+          distribution: goreleaser
+          version: v2.18.2
+          args: release --snapshot --clean --skip=publish
