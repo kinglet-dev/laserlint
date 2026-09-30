@@ -40,8 +40,7 @@ checksum:
 sboms:
   - artifacts: archive
 
-changelog:
-  disable: true # release notes come from CHANGELOG.md
-
+# Release notes come from CHANGELOG.md, passed with --release-notes. Don't
+# set changelog.disable: it also stops GoReleaser loading that file.
 release:
   draft: true # published by hand after a last look
