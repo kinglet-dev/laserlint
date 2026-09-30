@@ -22,14 +22,18 @@ type lineInfo struct {
 	perimeter float64
 }
 
-// index finds pieces near a point with a uniform grid (Spatial Hash).
+// index finds line near a point with a uniform grid (Spatial Hash). The
+// samples are short pieces; the line they are measured against is split
+// into longer targets, each filed in every cell within reach of it, so a
+// query only looks in its own cell.
 type index struct {
-	pieces []piece
-	lines  []lineInfo
-	cells  map[[2]int][]int32
-	reach  float64 // the minimum distance: how far a query looks
-	cell   float64 // reach + step: every piece within reach has its midpoint in the 3 × 3 cells around
-	window float64 // same-line length ignored either side of a point
+	pieces  []piece // samples, no longer than the step
+	targets []piece // the same line in stretches no longer than reach
+	lines   []lineInfo
+	cells   map[[2]int][]int32 // target ids by cell
+	reach   float64            // the minimum distance: how far a query looks
+	cell    float64            // cell size, equal to reach
+	window  float64            // same-line length ignored either side of a point
 }
 
 // segments calls f for each straight side of each line. A side of zero
@@ -53,31 +57,48 @@ func sampleCount(lines []geom.Polyline, step float64) int {
 	return n
 }
 
-func newIndex(lines []geom.Polyline, step, minDistance float64) *index {
-	idx := &index{lines: make([]lineInfo, len(lines)), cells: map[[2]int][]int32{},
-		reach: minDistance, cell: minDistance + step, window: math.Pi / 2 * minDistance}
+func newIndex(lines []geom.Polyline, samples int, step, minDistance float64) *index {
+	idx := &index{pieces: make([]piece, 0, samples), lines: make([]lineInfo, len(lines)), cells: map[[2]int][]int32{},
+		reach: minDistance, cell: minDistance, window: math.Pi / 2 * minDistance}
 	for i, l := range lines {
 		idx.lines[i].closed = l.Closed
 	}
 	segments(lines, func(line int, a, b geom.Point, length float64) {
-		n := int(math.Ceil(length / step))
-		for k := 0; k < n; k++ {
-			p := piece{line: line, a: lerp(a, b, float64(k)/float64(n)), b: lerp(a, b, float64(k+1)/float64(n)),
-				arc: idx.lines[line].perimeter, length: length / float64(n)}
-			p.mid = lerp(p.a, p.b, 0.5)
-			idx.lines[line].perimeter += p.length
-			idx.add(p)
+		arc := idx.lines[line].perimeter
+		idx.pieces = split(idx.pieces, line, a, b, arc, length, step)
+		for _, t := range split(nil, line, a, b, arc, length, minDistance) {
+			idx.add(t)
 		}
+		idx.lines[line].perimeter += length
 	})
 	return idx
 }
 
-// add stores a piece in the cell holding its midpoint, so each piece is in
-// exactly one cell and a query never meets it twice.
-func (idx *index) add(p piece) {
-	k := [2]int{idx.key(p.mid.X), idx.key(p.mid.Y)}
-	idx.cells[k] = append(idx.cells[k], int32(len(idx.pieces)))
-	idx.pieces = append(idx.pieces, p)
+// split appends the side ab, which starts arc along its line, cut into
+// equal pieces no longer than most.
+func split(out []piece, line int, a, b geom.Point, arc, length, most float64) []piece {
+	n := int(math.Ceil(length / most))
+	for k := 0; k < n; k++ {
+		p := piece{line: line, a: lerp(a, b, float64(k)/float64(n)), b: lerp(a, b, float64(k+1)/float64(n)),
+			arc: arc + length*float64(k)/float64(n), length: length / float64(n)}
+		p.mid = lerp(p.a, p.b, 0.5)
+		out = append(out, p)
+	}
+	return out
+}
+
+// add files a target in every cell its box, grown by reach, touches: any
+// point within reach of the target lies in one of them.
+func (idx *index) add(t piece) {
+	id := int32(len(idx.targets))
+	idx.targets = append(idx.targets, t)
+	x0, x1 := idx.key(math.Min(t.a.X, t.b.X)-idx.reach), idx.key(math.Max(t.a.X, t.b.X)+idx.reach)
+	y0, y1 := idx.key(math.Min(t.a.Y, t.b.Y)-idx.reach), idx.key(math.Max(t.a.Y, t.b.Y)+idx.reach)
+	for x := x0; x <= x1; x++ {
+		for y := y0; y <= y1; y++ {
+			idx.cells[[2]int{x, y}] = append(idx.cells[[2]int{x, y}], id)
+		}
+	}
 }
 
 func (idx *index) key(v float64) int { return int(math.Floor(v / idx.cell)) }

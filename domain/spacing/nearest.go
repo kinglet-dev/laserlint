@@ -14,14 +14,10 @@ func (idx *index) nearest(pc piece) (float64, geom.Point) {
 	p := pc.mid
 	at := pc.arc + pc.length/2
 	best, bestAt := math.Inf(1), geom.Point{}
-	for x := idx.key(p.X) - 1; x <= idx.key(p.X)+1; x++ {
-		for y := idx.key(p.Y) - 1; y <= idx.key(p.Y)+1; y++ {
-			for _, id := range idx.cells[[2]int{x, y}] {
-				if q := &idx.pieces[id]; !idx.skip(p, at, pc.line, q) {
-					if d, c := idx.distance(p, at, pc.line, *q); d < best {
-						best, bestAt = d, c
-					}
-				}
+	for _, id := range idx.cells[[2]int{idx.key(p.X), idx.key(p.Y)}] {
+		if q := &idx.targets[id]; !idx.skip(p, at, pc.line, q) {
+			if d, c := idx.distance(p, at, pc.line, *q); d < best {
+				best, bestAt = d, c
 			}
 		}
 	}

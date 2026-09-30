@@ -48,10 +48,9 @@ func Measure(lines []geom.Polyline, p Params) (Result, error) {
 		return Result{}, err
 	}
 	var r Result
-	near := make([]float64, len(idx.pieces))
+	near, _ := idx.nearestAll()
 	for i, pc := range idx.pieces {
 		r.Scored += pc.length
-		near[i], _ = idx.nearest(pc)
 		if near[i] < p.MinDistance {
 			r.Close += pc.length
 		}
@@ -62,10 +61,11 @@ func Measure(lines []geom.Polyline, p Params) (Result, error) {
 
 // build indexes the lines, refusing more samples than the limit.
 func build(lines []geom.Polyline, p Params) (*index, error) {
-	if n := sampleCount(lines, p.Step); n > p.MaxSamples {
+	n := sampleCount(lines, p.Step)
+	if n > p.MaxSamples {
 		return nil, fmt.Errorf("%w: it needs %d samples, the limit is %d", ErrTooManySamples, n, p.MaxSamples)
 	}
-	return newIndex(lines, p.Step, p.MinDistance), nil
+	return newIndex(lines, n, p.Step, p.MinDistance), nil
 }
 
 // Facing calls visit for every sample of line with other line within
@@ -78,10 +78,11 @@ func Facing(lines []geom.Polyline, p Params, visit func(from, to geom.Point, len
 		return 0, err
 	}
 	total := 0.0
-	for _, pc := range idx.pieces {
+	near, at := idx.nearestAll()
+	for i, pc := range idx.pieces {
 		total += pc.length
-		if d, q := idx.nearest(pc); d < p.MinDistance {
-			visit(pc.mid, q, pc.length)
+		if near[i] < p.MinDistance {
+			visit(pc.mid, at[i], pc.length)
 		}
 	}
 	return total, nil
