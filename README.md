@@ -43,7 +43,7 @@ WARNING  Small details
          Fix: Delete specks and slivers, or enlarge details to at least 0.50 mm across; where overlapping shapes leave slivers, combine them (Inkscape: Path → Union).
 WARNING  Density
          densest 10 mm area has 1.46 mm of line per mm² (lines about 0.69 mm apart); warning above 0.9, problem above 2
-         Where: (30.0, 27.5) mm from the top-left
+         Where: (30.0, 24.5) mm from the top-left
          Fix: Simplify or spread out the busiest area, or remove fine detail there.
 WARNING  Background shape
          a white background shape (60.0 × 60.0 mm) is scored around its edge like any other shape
