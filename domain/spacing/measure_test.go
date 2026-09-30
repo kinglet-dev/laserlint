@@ -37,6 +37,22 @@ var _ = Describe("Measure finds scored line that runs too close to other scored 
 		Expect(r.Close).To(BeZero())
 	})
 
+	It("finds close line on every side, across grid cell boundaries", func() {
+		// Arrange: pairs 0.34 mm apart straddling the 0.35 mm cells both ways.
+		pairs := [][]geom.Polyline{
+			{line(pt(0.3, 0), pt(0.3, 10)), line(pt(0.64, 0), pt(0.64, 10))},
+			{line(pt(0, 0.3), pt(10, 0.3)), line(pt(0, 0.64), pt(10, 0.64))},
+		}
+
+		for _, p := range pairs {
+			// Act
+			r := measure(p...)
+
+			// Assert
+			Expect(r.Close).To(BeNumerically("~", 20, 1e-9))
+		}
+	})
+
 	It("finds nothing close on a single straight line", func() {
 		// Act
 		r := measure(line(pt(0, 0), pt(10, 0)))
