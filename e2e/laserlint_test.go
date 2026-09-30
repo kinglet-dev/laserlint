@@ -22,6 +22,7 @@ var _ = Describe("The laserlint binary", func() {
 		Expect(out).To(ContainSubstring("OK       Crossings"))
 		Expect(out).To(ContainSubstring("OK       Small details"))
 		Expect(out).To(ContainSubstring("OK       Background shape"))
+		Expect(out).To(ContainSubstring("OK       Line art"))
 		Expect(out).To(HaveSuffix("Ready to burn, with 1 info.\n"))
 		Expect(errOut).To(BeEmpty())
 	})
@@ -77,6 +78,19 @@ var _ = Describe("The laserlint binary", func() {
 		Expect(code).To(Equal(0))
 		Expect(out).To(ContainSubstring("WARNING  Background shape"))
 		Expect(out).To(ContainSubstring("a white background shape (20.0 × 20.0 mm)"))
+	})
+
+	It("notes line art drawn as thin black strokes, exiting 0", func() {
+		// Arrange: a black stroke 16 mm long and 0.5 mm wide.
+		path := file("stroke.svg", svg(`<rect x="2" y="5" width="16" height="0.5"/>`))
+
+		// Act
+		out, _, code := laserlint("", path)
+
+		// Assert
+		Expect(code).To(Equal(0))
+		Expect(out).To(ContainSubstring("INFO     Line art"))
+		Expect(out).To(ContainSubstring("so each stroke burns as a double line"))
 	})
 
 	It("reads standard input and writes JSON", func() {
