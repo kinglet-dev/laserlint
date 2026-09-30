@@ -51,6 +51,11 @@ jobs:
           mv go.sum go.sum.committed
           go mod tidy
           diff -u go.sum.committed go.sum
+      - name: README images are safe SVGs (no scripts or external references)
+        run: |
+          if grep -nE '<script|href=|xlink:|url\(|@import|<foreignObject' docs/images/*.svg; then
+            echo "Remove the scripts or external references above."; exit 1
+          fi
       - name: Known vulnerabilities (govulncheck)
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.8.0 ./...
       - name: Fuzz parsers (30 s each)
