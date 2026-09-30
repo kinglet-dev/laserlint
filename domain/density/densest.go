@@ -55,6 +55,9 @@ func Densest(lines []geom.Polyline, p Params) (Result, error) {
 }
 
 // densest slides an m × m-cell window over the grid and keeps the fullest.
+// A window must beat the best so far by more than rounding error, so of
+// windows with the same line the first, top to bottom and left to right,
+// is reported on every processor (sums can round differently on each).
 func (g *grid) densest(m int, window float64) Result {
 	s, w := g.summed(), g.nx+1
 	var best Result
@@ -63,7 +66,7 @@ func (g *grid) densest(m int, window float64) Result {
 		for x := 0; x <= max(g.nx-m, 0); x++ {
 			x1, y1 := min(x+m, g.nx), min(y+m, g.ny)
 			sum := s[y1*w+x1] - s[y*w+x1] - s[y1*w+x] + s[y*w+x]
-			if sum > bestSum {
+			if sum > bestSum+1e-9*(1+bestSum) {
 				bestSum = sum
 				best = Result{Density: sum / (window * window),
 					At: geom.Point{X: g.x0 + (float64(x)+float64(m)/2)*g.step, Y: g.y0 + (float64(y)+float64(m)/2)*g.step}}

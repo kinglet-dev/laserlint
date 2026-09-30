@@ -116,6 +116,26 @@ var _ = Describe("Densest finds the most scored line in any window", func() {
 		Expect(r.At.Y).To(BeNumerically("~", 45, 0.5))
 	})
 
+	DescribeTable("reports the first of equally dense areas, top to bottom, whatever the rounding",
+		func(extra float64) {
+			// Arrange: two identical hatches of 200 mm of line, the lower one
+			// with a negligible amount more, as floating-point sums can differ
+			// between processors.
+			lines := append(hatch(0, 0), hatch(0, 40)...)
+			if extra > 0 {
+				lines = append(lines, line(pt(5, 45), pt(5+extra, 45)))
+			}
+
+			// Act
+			r := densest(lines...)
+
+			// Assert
+			Expect(r.At.Y).To(BeNumerically("~", 5, 0.5))
+		},
+		Entry("exactly equal", 0.0),
+		Entry("0.00000001 mm more below", 1e-8),
+	)
+
 	// Found by fuzzing: rounding at a cell edge stepped the traversal outside
 	// the grid, an index out of range. More such inputs are kept in
 	// testdata/fuzz/FuzzDensest and run with every test run.

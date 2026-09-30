@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60mm" height="60mm" viewBox="0 0 60 60">
+  <!-- White background: laser software still scores its edge. -->
+  <rect width="60" height="60" fill="#fff"/>
+  <!-- A ring drawn as a thin black stroke: both edges are scored. -->
+  <path d="M30 2a28 28 0 1 0 0.001 0zM30 2.5a27.5 27.5 0 1 1 -0.001 0z"/>
+  <!-- Waves 0.3 mm apart: too close and too dense. -->
+  <g fill="none" stroke="#000" stroke-width="0.1">
+    <path d="M16 24.0 q7 -3 14 0 t14 0"/>
+    <path d="M16 24.3 q7 -3 14 0 t14 0"/>
+    <path d="M16 24.6 q7 -3 14 0 t14 0"/>
+    <path d="M16 24.9 q7 -3 14 0 t14 0"/>
+    <path d="M16 25.2 q7 -3 14 0 t14 0"/>
+    <path d="M16 25.5 q7 -3 14 0 t14 0"/>
+    <path d="M16 25.8 q7 -3 14 0 t14 0"/>
+    <path d="M16 26.1 q7 -3 14 0 t14 0"/>
+    <path d="M16 26.4 q7 -3 14 0 t14 0"/>
+    <path d="M16 26.7 q7 -3 14 0 t14 0"/>
+    <path d="M16 27.0 q7 -3 14 0 t14 0"/>
+    <path d="M16 27.3 q7 -3 14 0 t14 0"/>
+    <path d="M16 27.6 q7 -3 14 0 t14 0"/>
+    <path d="M16 27.9 q7 -3 14 0 t14 0"/>
+  </g>
+  <!-- Two lines that cross. -->
+  <path d="M18 34 L42 46 M18 46 L42 34" fill="none" stroke="#000" stroke-width="0.1"/>
+  <!-- A speck 0.3 mm across. -->
+  <circle cx="30" cy="14" r="0.15"/>
+</svg>
