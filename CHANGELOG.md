@@ -2,6 +2,12 @@
 
 All notable changes to laserlint. Versions follow [Semantic Versioning](https://semver.org/): within a major version, flags, exit codes and the JSON report only change in backwards-compatible ways.
 
+## 0.1.1 (unreleased)
+
+### Fixed
+
+- `laserlint --version` now shows the version for a copy installed with `go install`, instead of `dev`.
+
 ## 0.1.0 (2026-09-29)
 
 The first release.
