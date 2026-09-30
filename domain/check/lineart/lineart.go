@@ -11,6 +11,7 @@ import (
 	"github.com/kinglet-dev/laserlint/domain/check"
 	"github.com/kinglet-dev/laserlint/domain/fill"
 	"github.com/kinglet-dev/laserlint/domain/geom"
+	"github.com/kinglet-dev/laserlint/domain/parallel"
 	"github.com/kinglet-dev/laserlint/domain/spacing"
 )
 
@@ -45,15 +46,23 @@ func (c Check) Run(in check.Input, s check.Settings) ([]check.Finding, error) {
 		return nil, err
 	}
 	width := 2 * (s.Line + s.Gap)
-	var strokes float64
+	var between []geom.Point // halfway between each sample and the line it faces
+	var lengths []float64
 	total, err := spacing.Facing(in.Lines, spacing.Params{MinDistance: width, Step: width / 8, MaxSamples: maxSamples},
 		func(from, to geom.Point, length float64) {
-			if f.Dark(geom.Point{X: (from.X + to.X) / 2, Y: (from.Y + to.Y) / 2}) {
-				strokes += length
-			}
+			between = append(between, geom.Point{X: (from.X + to.X) / 2, Y: (from.Y + to.Y) / 2})
+			lengths = append(lengths, length)
 		})
 	if err != nil {
 		return nil, err
+	}
+	dark := make([]bool, len(between))
+	parallel.For(len(between), func(i int) { dark[i] = f.Dark(between[i]) })
+	var strokes float64
+	for i, d := range dark {
+		if d {
+			strokes += lengths[i]
+		}
 	}
 	percent := math.Round(100 * strokes / total)
 	if !(percent > most) { // also NaN, for a design with no line
