@@ -8,8 +8,8 @@ import (
 	"math"
 	"sort"
 
+	"github.com/kinglet-dev/core/domain/geom"
 	"github.com/kinglet-dev/laserlint/domain/check"
-	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
 // cover is the share of the design's area a white shape's bounding box must

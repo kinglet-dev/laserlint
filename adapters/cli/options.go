@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/kinglet-dev/core/domain/units"
 	"github.com/kinglet-dev/laserlint/domain/check"
-	"github.com/kinglet-dev/laserlint/domain/units"
 )
 
 // options are the parsed and validated arguments.

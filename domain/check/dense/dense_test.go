@@ -4,10 +4,10 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	"github.com/kinglet-dev/core/domain/density"
+	"github.com/kinglet-dev/core/domain/geom"
 	"github.com/kinglet-dev/laserlint/domain/check"
 	"github.com/kinglet-dev/laserlint/domain/check/dense"
-	"github.com/kinglet-dev/laserlint/domain/density"
-	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
 func pt(x, y float64) geom.Point { return geom.Point{X: x, Y: y} }

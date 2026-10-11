@@ -4,10 +4,10 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	"github.com/kinglet-dev/core/domain/design"
+	"github.com/kinglet-dev/core/domain/geom"
 	"github.com/kinglet-dev/laserlint/domain/check"
 	"github.com/kinglet-dev/laserlint/domain/check/background"
-	"github.com/kinglet-dev/laserlint/domain/design"
-	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
 // rect is a filled rectangle, white or black.

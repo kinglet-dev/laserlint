@@ -154,7 +154,7 @@ None: there's no configuration file. Everything is set with the flags above.
 
 ## Dependencies
 
-laserlint uses only the Go standard library. Its tests use [Ginkgo](https://github.com/onsi/ginkgo) and [Gomega](https://github.com/onsi/gomega) (both MIT), which aren't part of the program.
+laserlint uses the Go standard library and [core](https://github.com/kinglet-dev/core) (MIT), Kinglet's shared SVG reader and geometry, which itself uses only the standard library. Its tests use [Ginkgo](https://github.com/onsi/ginkgo) and [Gomega](https://github.com/onsi/gomega) (both MIT), which aren't part of the program.
 
 It needs no network connection and sends nothing anywhere.
 

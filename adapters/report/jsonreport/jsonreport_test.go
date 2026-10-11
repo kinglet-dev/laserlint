@@ -7,11 +7,11 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	"github.com/kinglet-dev/core/domain/geom"
 	"github.com/kinglet-dev/laserlint/adapters/report"
 	"github.com/kinglet-dev/laserlint/adapters/report/jsonreport"
 	"github.com/kinglet-dev/laserlint/app"
 	"github.com/kinglet-dev/laserlint/domain/check"
-	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
 var about = report.About{Version: "0.1.0", Input: "coaster.svg"}

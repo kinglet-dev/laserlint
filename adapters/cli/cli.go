@@ -10,12 +10,12 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/kinglet-dev/core/domain/design"
 	"github.com/kinglet-dev/laserlint/adapters/report"
 	"github.com/kinglet-dev/laserlint/adapters/report/jsonreport"
 	"github.com/kinglet-dev/laserlint/adapters/report/text"
 	"github.com/kinglet-dev/laserlint/app"
 	"github.com/kinglet-dev/laserlint/domain/check"
-	"github.com/kinglet-dev/laserlint/domain/design"
 )
 
 // Exit codes shared by every Kinglet tool.

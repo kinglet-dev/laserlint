@@ -6,10 +6,10 @@ import (
 	"io"
 	"strings"
 
+	"github.com/kinglet-dev/core/domain/design"
 	"github.com/kinglet-dev/laserlint/adapters/cli"
 	"github.com/kinglet-dev/laserlint/app"
 	"github.com/kinglet-dev/laserlint/domain/check"
-	"github.com/kinglet-dev/laserlint/domain/design"
 )
 
 // fakeChecker is a test double for the checker port.

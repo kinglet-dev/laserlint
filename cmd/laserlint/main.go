@@ -9,10 +9,10 @@ import (
 	"os"
 	"runtime/debug"
 
-	"github.com/kinglet-dev/laserlint/adapters/buildinfo"
+	"github.com/kinglet-dev/core/adapters/buildinfo"
+	"github.com/kinglet-dev/core/adapters/files"
+	"github.com/kinglet-dev/core/adapters/svg/reader"
 	"github.com/kinglet-dev/laserlint/adapters/cli"
-	"github.com/kinglet-dev/laserlint/adapters/files"
-	"github.com/kinglet-dev/laserlint/adapters/svg/reader"
 	"github.com/kinglet-dev/laserlint/app"
 	"github.com/kinglet-dev/laserlint/domain/check/background"
 	"github.com/kinglet-dev/laserlint/domain/check/crossings"

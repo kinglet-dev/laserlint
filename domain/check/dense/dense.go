@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/kinglet-dev/core/domain/density"
+	"github.com/kinglet-dev/core/domain/geom"
 	"github.com/kinglet-dev/laserlint/domain/check"
-	"github.com/kinglet-dev/laserlint/domain/density"
-	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
 // The window and step of the measurement, mm, and a limit on grid cells

@@ -4,12 +4,12 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	"github.com/kinglet-dev/core/domain/design"
+	"github.com/kinglet-dev/core/domain/fill"
+	"github.com/kinglet-dev/core/domain/geom"
+	"github.com/kinglet-dev/core/domain/spacing"
 	"github.com/kinglet-dev/laserlint/domain/check"
 	"github.com/kinglet-dev/laserlint/domain/check/lineart"
-	"github.com/kinglet-dev/laserlint/domain/design"
-	"github.com/kinglet-dev/laserlint/domain/fill"
-	"github.com/kinglet-dev/laserlint/domain/geom"
-	"github.com/kinglet-dev/laserlint/domain/spacing"
 )
 
 func pt(x, y float64) geom.Point { return geom.Point{X: x, Y: y} }
