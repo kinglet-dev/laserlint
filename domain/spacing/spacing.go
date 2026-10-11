@@ -65,7 +65,7 @@ func build(lines []geom.Polyline, p Params) (*index, error) {
 	if n > p.MaxSamples {
 		return nil, fmt.Errorf("%w: it needs %d samples, the limit is %d", ErrTooManySamples, n, p.MaxSamples)
 	}
-	return newIndex(lines, n, p.Step, p.MinDistance), nil
+	return newIndex(join(lines), n, p.Step, p.MinDistance), nil
 }
 
 // Facing calls visit for every sample of line with other line within

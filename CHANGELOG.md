@@ -2,6 +2,12 @@
 
 All notable changes to laserlint. Versions follow [Semantic Versioning](https://semver.org/): within a major version, flags, exit codes and the JSON report only change in backwards-compatible ways.
 
+## 0.1.2 (unreleased)
+
+### Fixed
+
+- **Lines too close** no longer reports the joint where two separate lines meet end to end, as split paths and DXF exports draw them. Such lines are now measured as the one line they draw, as the check always intended: a right angle between two pieces is fine, just as it is within one path. Where three or more ends meet, the stretch near the meeting point still counts.
+
 ## 0.1.1 (2026-09-29)
 
 ### Fixed
