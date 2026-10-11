@@ -2,6 +2,12 @@
 
 All notable changes to laserlint. Versions follow [Semantic Versioning](https://semver.org/): within a major version, flags, exit codes and the JSON report only change in backwards-compatible ways.
 
+## 0.1.3 (unreleased)
+
+### Changed
+
+- The SVG reader, geometry and measurements now come from [core](https://github.com/kinglet-dev/core) 0.1.0, Kinglet's shared library, instead of being part of laserlint. They are the same code, so output, flags and exit codes are unchanged.
+
 ## 0.1.2 (2026-10-10)
 
 ### Fixed
