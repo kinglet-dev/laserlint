@@ -2,7 +2,7 @@
 
 All notable changes to laserlint. Versions follow [Semantic Versioning](https://semver.org/): within a major version, flags, exit codes and the JSON report only change in backwards-compatible ways.
 
-## 0.1.2 (unreleased)
+## 0.1.2 (2026-10-10)
 
 ### Fixed
 
