@@ -4,8 +4,8 @@
 package check
 
 import (
-	"github.com/kinglet-dev/laserlint/domain/design"
-	"github.com/kinglet-dev/laserlint/domain/geom"
+	"github.com/kinglet-dev/core/domain/design"
+	"github.com/kinglet-dev/core/domain/geom"
 )
 
 // Severity says how much a finding matters. Only problems make a design

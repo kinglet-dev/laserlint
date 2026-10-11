@@ -7,9 +7,9 @@ import (
 	"math"
 	"sort"
 
+	"github.com/kinglet-dev/core/domain/enclose"
+	"github.com/kinglet-dev/core/domain/geom"
 	"github.com/kinglet-dev/laserlint/domain/check"
-	"github.com/kinglet-dev/laserlint/domain/enclose"
-	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
 // Check is the small-details check.

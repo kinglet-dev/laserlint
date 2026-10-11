@@ -3,7 +3,7 @@ package check
 import (
 	"math"
 
-	"github.com/kinglet-dev/laserlint/domain/geom"
+	"github.com/kinglet-dev/core/domain/geom"
 )
 
 // How many places a finding lists, and how near, in mm, two points are to

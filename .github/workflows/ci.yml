@@ -34,7 +34,7 @@ jobs:
         run: scripts/check-coverage.sh coverage.out
 
   checks:
-    name: Formatting, supply chain and fuzzing
+    name: Formatting and supply chain
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -58,16 +58,6 @@ jobs:
           fi
       - name: Known vulnerabilities (govulncheck)
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.8.0 ./...
-      - name: Fuzz parsers (30 s each)
-        run: |
-          go test ./domain/units -run '^$' -fuzz=FuzzParseLength -fuzztime=30s
-          go test ./adapters/svg/syntax -run '^$' -fuzz=FuzzParsePath -fuzztime=30s
-          go test ./adapters/svg/syntax -run '^$' -fuzz=FuzzParseTransform -fuzztime=30s
-          go test ./adapters/svg/reader -run '^$' -fuzz=FuzzRead -fuzztime=30s
-          go test ./domain/density -run '^$' -fuzz=FuzzDensest -fuzztime=30s
-          go test ./domain/crossing -run '^$' -fuzz=FuzzFind -fuzztime=30s
-          go test ./domain/enclose -run '^$' -fuzz=FuzzSmallest -fuzztime=30s
-          go test ./domain/fill -run '^$' -fuzz=FuzzDark -fuzztime=30s
 
   release-dry-run:
     name: Release build (not published)

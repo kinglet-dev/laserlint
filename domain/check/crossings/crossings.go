@@ -7,9 +7,9 @@ import (
 	"math"
 	"sort"
 
+	"github.com/kinglet-dev/core/domain/crossing"
+	"github.com/kinglet-dev/core/domain/geom"
 	"github.com/kinglet-dev/laserlint/domain/check"
-	"github.com/kinglet-dev/laserlint/domain/crossing"
-	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
 // Limits on the search (threat model: 5,000,000 points), the grid cell, mm,

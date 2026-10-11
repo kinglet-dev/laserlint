@@ -3,6 +3,7 @@ module github.com/kinglet-dev/laserlint
 go 1.27.1
 
 require (
+	github.com/kinglet-dev/core v0.1.0
 	github.com/onsi/ginkgo/v2 v2.33.0
 	github.com/onsi/gomega v1.44.0
 )

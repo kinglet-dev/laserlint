@@ -5,8 +5,8 @@ package app
 import (
 	"fmt"
 
+	"github.com/kinglet-dev/core/domain/design"
 	"github.com/kinglet-dev/laserlint/domain/check"
-	"github.com/kinglet-dev/laserlint/domain/design"
 )
 
 // tolerance is how closely score lines follow curves, in mm: far below

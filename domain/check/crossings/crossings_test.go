@@ -4,10 +4,10 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	"github.com/kinglet-dev/core/domain/crossing"
+	"github.com/kinglet-dev/core/domain/geom"
 	"github.com/kinglet-dev/laserlint/domain/check"
 	"github.com/kinglet-dev/laserlint/domain/check/crossings"
-	"github.com/kinglet-dev/laserlint/domain/crossing"
-	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
 func pt(x, y float64) geom.Point { return geom.Point{X: x, Y: y} }

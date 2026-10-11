@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/kinglet-dev/core/domain/fill"
+	"github.com/kinglet-dev/core/domain/geom"
+	"github.com/kinglet-dev/core/domain/parallel"
+	"github.com/kinglet-dev/core/domain/spacing"
 	"github.com/kinglet-dev/laserlint/domain/check"
-	"github.com/kinglet-dev/laserlint/domain/fill"
-	"github.com/kinglet-dev/laserlint/domain/geom"
-	"github.com/kinglet-dev/laserlint/domain/parallel"
-	"github.com/kinglet-dev/laserlint/domain/spacing"
 )
 
 // Limits on the work (threat model: 5,000,000 samples), how closely the

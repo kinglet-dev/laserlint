@@ -7,10 +7,10 @@ import (
 	"io"
 	"strings"
 
+	"github.com/kinglet-dev/core/domain/geom"
 	"github.com/kinglet-dev/laserlint/adapters/report"
 	"github.com/kinglet-dev/laserlint/app"
 	"github.com/kinglet-dev/laserlint/domain/check"
-	"github.com/kinglet-dev/laserlint/domain/geom"
 )
 
 // labels are the severity words, padded so check names line up.
