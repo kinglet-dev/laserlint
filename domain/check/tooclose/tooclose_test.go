@@ -61,7 +61,7 @@ var _ = Describe("The lines-too-close check", func() {
 		Expect(f).To(HaveLen(1))
 		Expect(f[0].Check).To(Equal("lines-too-close"))
 		Expect(f[0].Severity).To(Equal(check.Warning))
-		Expect(f[0].Message).To(Equal("2.0% of scored line is within 0.35 mm of other line, centre to centre (limit 10%); nearest 0.30 mm"))
+		Expect(f[0].Message).To(Equal("2.0% of scored line is within 0.35 mm of other line, center to center (limit 10%); nearest 0.30 mm"))
 		Expect(f[0].Fix).NotTo(BeEmpty())
 	})
 

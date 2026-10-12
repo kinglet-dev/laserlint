@@ -90,13 +90,13 @@ func parse(args []string) (options, error) {
 	return o, err
 }
 
-// length reads a length that must have a unit, in millimetres.
+// length reads a length that must have a unit, in millimeters.
 func length(flag, value string) (float64, error) {
 	l, err := units.ParseLength(value)
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", flag, err)
 	}
-	return l.Millimetres(), nil
+	return l.Millimeters(), nil
 }
 
 // percent reads a percentage such as "10%" as a share from 0 to 1.

@@ -1,7 +1,7 @@
 name: Badges
 
 # Makes the README's badges here, so no badge service sees the repository:
-# coverage measured by the tests, the latest published release, the licence
+# coverage measured by the tests, the latest published release, the license
 # and the Go version. They are kept on the "badges" branch, one commit that
 # is replaced each time.
 on:
@@ -40,11 +40,11 @@ jobs:
           mkdir -p "$RUNNER_TEMP/badges"
           out="$RUNNER_TEMP/badges"
           total=$(go tool cover -func=coverage.out | awk '/^total:/ {print $NF}')
-          colour='#1A7F37'; [[ "$total" == "100.0%" ]] || colour='#C4381E'
-          scripts/badge.sh coverage "$total" "$colour" > "$out/coverage.svg"
+          color='#1A7F37'; [[ "$total" == "100.0%" ]] || color='#C4381E'
+          scripts/badge.sh coverage "$total" "$color" > "$out/coverage.svg"
           release=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName 2>/dev/null || echo none)
           scripts/badge.sh release "$release" > "$out/release.svg"
-          scripts/badge.sh licence MIT > "$out/licence.svg"
+          scripts/badge.sh license MIT > "$out/license.svg"
           scripts/badge.sh go "$(awk '/^go / {print $2}' go.mod)" > "$out/go.svg"
       - name: Replace the badges branch
         env:

@@ -1,12 +1,14 @@
 # Changelog
 
-All notable changes to laserlint. Versions follow [Semantic Versioning](https://semver.org/): within a major version, flags, exit codes and the JSON report only change in backwards-compatible ways.
+All notable changes to laserlint. Versions follow [Semantic Versioning](https://semver.org/): within a major version, flags, exit codes and the JSON report only change in backward-compatible ways.
 
 ## 0.1.3 (unreleased)
 
 ### Changed
 
-- The SVG reader, geometry and measurements now come from [core](https://github.com/kinglet-dev/core) 0.1.0, Kinglet's shared library, instead of being part of laserlint. They are the same code, so output, flags and exit codes are unchanged.
+- The SVG reader, geometry and measurements now come from [core](https://github.com/kinglet-dev/core) 0.4.0, Kinglet's shared library, instead of being part of laserlint. They are the same code, so flags, exit codes and measurements are unchanged.
+- laserlint now uses American spelling, like every Kinglet tool. The only change in its output is the wording of **Lines too close**: "center to center" instead of "centre to centre". JSON keys and values are unchanged; only that message's text differs.
+- The license badge is now `badges/license.svg`.
 
 ## 0.1.2 (2026-10-10)
 
