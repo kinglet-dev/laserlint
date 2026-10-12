@@ -96,7 +96,7 @@ Not ready to burn: 1 problem.
 		Entry("all three", []check.Severity{check.Info, check.Warning, check.Problem}, "Not ready to burn: 1 problem, 1 warning and 1 info."),
 	)
 
-	It("labels each severity with a word, never a symbol or colour alone", func() {
+	It("labels each severity with a word, never a symbol or color alone", func() {
 		// Act
 		out := write(reportOf(
 			result("A", check.Finding{Severity: check.Warning}),

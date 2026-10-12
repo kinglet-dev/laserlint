@@ -24,7 +24,7 @@ and sample files are very welcome in the meantime.
 - Keep each commit to one change with its tests; every commit builds and passes.
 - Commit messages: a short imperative subject (72 characters at most), a blank
   line, then why the change was made.
-- No new dependencies without discussion; any dependency must use a licence
+- No new dependencies without discussion; any dependency must use a license
   that allows unrestricted commercial use (MIT, Apache 2.0, BSD, ISC).
 - Don't commit secrets, personal data, local file paths, build output or
   coverage files.

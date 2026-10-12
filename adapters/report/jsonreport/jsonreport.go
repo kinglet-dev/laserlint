@@ -116,6 +116,6 @@ func (Format) Write(w io.Writer, a report.About, r app.Report) error {
 	return enc.Encode(d)
 }
 
-// mm rounds to a thousandth of a millimetre, so output is the same on
+// mm rounds to a thousandth of a millimeter, so output is the same on
 // every CPU.
 func mm(v float64) float64 { return math.Round(v*1000) / 1000 }

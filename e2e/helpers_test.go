@@ -15,7 +15,7 @@ type buffer = bytes.Buffer
 
 func stringsReader(s string) io.Reader { return strings.NewReader(s) }
 
-// svg is a 20 × 20 mm document where one user unit is one millimetre.
+// svg is a 20 × 20 mm document where one user unit is one millimeter.
 func svg(body string) string {
 	return `<svg xmlns="http://www.w3.org/2000/svg" width="20mm" height="20mm" viewBox="0 0 20 20">` + body + `</svg>`
 }

@@ -100,7 +100,7 @@ var _ = Describe("laserlint's flags", func() {
 		Entry("a crossings limit that isn't a whole number", []string{"--max-crossings", "2.5"}, "--max-crossings: write a whole number of crossings, such as 50"),
 		Entry("a negative crossings limit", []string{"--max-crossings", "-1"}, "--max-crossings: write a whole number of crossings, such as 50"),
 		Entry("a stacked limit without a unit", []string{"--max-stacked", "2"}, "--max-stacked: length has no unit"),
-		Entry("an unknown flag", []string{"--colour"}, "flag provided but not defined: -colour"),
+		Entry("an unknown flag", []string{"--color"}, "flag provided but not defined: -color"),
 	)
 
 	It("needs a file", func() {

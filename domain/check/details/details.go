@@ -49,7 +49,7 @@ func (c Check) Run(in check.Input, s check.Settings) ([]check.Finding, error) {
 		Message: fmt.Sprintf("%s (problem above %d); smallest %.2f mm",
 			shapes(len(small), s.Detail), s.MaxDetails, small[0].Diameter),
 		Fix:       fmt.Sprintf("Delete specks and slivers, or enlarge details to at least %.2f mm across; where overlapping shapes leave slivers, combine them (Inkscape: Path → Union).", s.Detail),
-		Locations: centres(small),
+		Locations: centers(small),
 	}
 	if len(small) > s.MaxDetails {
 		f.Severity = check.Problem
@@ -64,7 +64,7 @@ func shapes(n int, detail float64) string {
 	return fmt.Sprintf("%d closed shapes under %.2f mm across burn as dots", n, detail)
 }
 
-func centres(circles []enclose.Circle) []geom.Point {
+func centers(circles []enclose.Circle) []geom.Point {
 	points := make([]geom.Point, len(circles))
 	for i, c := range circles {
 		points[i] = c.Center

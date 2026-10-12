@@ -1,5 +1,5 @@
 // Package background is the check for white-filled shapes. Laser software
-// scores every filled shape's outline whatever its colour, so a white
+// scores every filled shape's outline whatever its color, so a white
 // background rectangle burns a frame around the design.
 package background
 
@@ -35,7 +35,7 @@ func (Check) Name() string { return "Background shape" }
 type box struct{ x0, y0, x1, y1 float64 }
 
 func (b box) area() float64      { return (b.x1 - b.x0) * (b.y1 - b.y0) }
-func (b box) centre() geom.Point { return geom.Point{X: (b.x0 + b.x1) / 2, Y: (b.y0 + b.y1) / 2} }
+func (b box) center() geom.Point { return geom.Point{X: (b.x0 + b.x1) / 2, Y: (b.y0 + b.y1) / 2} }
 
 // Run warns about white backgrounds and notes other white shapes.
 func (c Check) Run(in check.Input, _ check.Settings) ([]check.Finding, error) {
@@ -59,7 +59,7 @@ func (c Check) Run(in check.Input, _ check.Settings) ([]check.Finding, error) {
 		out = append(out, check.Finding{
 			Check: c.ID(), Severity: check.Warning, Message: backgroundMessage(backgrounds),
 			Fix:       "Delete it before burning; hiding it isn't enough, as laser software such as xTool Creative Space burns hidden layers too.",
-			Locations: centres(backgrounds),
+			Locations: centers(backgrounds),
 		})
 	}
 	if len(others) > 0 {
@@ -67,7 +67,7 @@ func (c Check) Run(in check.Input, _ check.Settings) ([]check.Finding, error) {
 			Check: c.ID(), Severity: check.Info,
 			Message:   fmt.Sprintf("%s scored like any other shape: white doesn't mean not burned", count(len(others))),
 			Fix:       "Delete any white shapes that aren't meant to burn.",
-			Locations: centres(others),
+			Locations: centers(others),
 		})
 	}
 	return out, nil
@@ -93,12 +93,12 @@ func sortLargest(b []box) {
 	sort.SliceStable(b, func(i, j int) bool { return b[i].area() > b[j].area() })
 }
 
-// centres lists the boxes' centres, largest first.
-func centres(b []box) []geom.Point {
+// centers lists the boxes' centers, largest first.
+func centers(b []box) []geom.Point {
 	sortLargest(b)
 	points := make([]geom.Point, len(b))
 	for i, x := range b {
-		points[i] = x.centre()
+		points[i] = x.center()
 	}
 	return check.Places(points)
 }

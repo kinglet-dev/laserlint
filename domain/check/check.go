@@ -28,7 +28,7 @@ type Finding struct {
 	Locations []geom.Point // worst places first, mm from the top-left
 }
 
-// Settings are the physical limits the checks apply, in millimetres.
+// Settings are the physical limits the checks apply, in millimeters.
 type Settings struct {
 	Line      float64 // width of a scored line
 	Gap       float64 // minimum clear gap between the edges of two lines

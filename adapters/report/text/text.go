@@ -1,5 +1,5 @@
 // Package text writes laserlint's report for people: plain text, with
-// every severity spelled out so no meaning rests on symbols or colour.
+// every severity spelled out so no meaning rests on symbols or color.
 package text
 
 import (

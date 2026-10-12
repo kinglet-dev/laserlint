@@ -9,7 +9,7 @@
   <a href="https://github.com/kinglet-dev/laserlint/actions/workflows/ci.yml"><img src="https://github.com/kinglet-dev/laserlint/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI status"></a>
   <a href="https://github.com/kinglet-dev/laserlint/actions/workflows/badges.yml"><img src="https://raw.githubusercontent.com/kinglet-dev/laserlint/badges/coverage.svg" alt="Test coverage, measured in CI"></a>
   <a href="https://github.com/kinglet-dev/laserlint/releases/latest"><img src="https://raw.githubusercontent.com/kinglet-dev/laserlint/badges/release.svg" alt="Latest release"></a>
-  <a href="LICENSE"><img src="https://raw.githubusercontent.com/kinglet-dev/laserlint/badges/licence.svg" alt="Licence: MIT"></a>
+  <a href="LICENSE"><img src="https://raw.githubusercontent.com/kinglet-dev/laserlint/badges/license.svg" alt="License: MIT"></a>
   <a href="go.mod"><img src="https://raw.githubusercontent.com/kinglet-dev/laserlint/badges/go.svg" alt="Go version"></a>
 </p>
 
@@ -30,9 +30,9 @@ $ laserlint coaster.svg
 laserlint 0.1.0 · coaster.svg · 60.0 × 60.0 mm · line 0.10 mm · gap 0.25 mm
 
 PROBLEM  Lines too close
-         38.7% of scored line is within 0.35 mm of other line, centre to centre (limit 10%); nearest 0.02 mm
+         38.7% of scored line is within 0.35 mm of other line, center to center (limit 10%); nearest 0.02 mm
          Where: (30.0, 40.0), (43.7, 24.7), (43.7, 26.2), (43.7, 27.7), (16.1, 23.9) mm from the top-left
-         Fix: Space lines at least 0.35 mm apart, centre to centre, or remove fine detail; blunt or shorten very sharp points.
+         Fix: Space lines at least 0.35 mm apart, center to center, or remove fine detail; blunt or shorten very sharp points.
 WARNING  Crossings
          1 place where score lines cross or one ends on another, burning twice (problem above 50)
          Where: (30.0, 40.0) mm from the top-left
@@ -54,7 +54,7 @@ OK       Line art
 Not ready to burn: 1 problem and 4 warnings.
 ```
 
-Positions are in millimetres from the design's top-left corner. The exit status is 1, so a script can stop before burning.
+Positions are in millimeters from the design's top-left corner. The exit status is 1, so a script can stop before burning.
 
 ## Installation
 
@@ -99,7 +99,7 @@ Scale the design to the size you'll burn before checking: the size saved in the 
 | Background shape | A white shape covering the design; laser software still scores its edge | yes | — |
 | Line art | Most of the line is the two edges of thin black strokes, so each stroke burns twice | information only | — |
 
-Laser software such as xTool Creative Space scores every outline of a filled shape and the line of every hairline, whatever the colour, and it includes hidden layers. laserlint reads the SVG the same way.
+Laser software such as xTool Creative Space scores every outline of a filled shape and the line of every hairline, whatever the color, and it includes hidden layers. laserlint reads the SVG the same way.
 
 ### Flags
 
@@ -144,7 +144,7 @@ cat coaster.svg | laserlint -
 ## Compatibility
 
 - **Systems:** Windows, macOS and Linux, on 64-bit Intel/AMD (`amd64`) and Arm (`arm64`). Tested on all three in CI.
-- **SVG:** `path` (all commands, including arcs), `rect`, `circle`, `ellipse`, `line`, `polyline`, `polygon` and groups, with transforms, `viewBox`, sizes in any unit, and colours from attributes or the `style` attribute. Checked against files from Illustrator, Inkscape, potrace and online converters.
+- **SVG:** `path` (all commands, including arcs), `rect`, `circle`, `ellipse`, `line`, `polyline`, `polygon` and groups, with transforms, `viewBox`, sizes in any unit, and colors from attributes or the `style` attribute. Checked against files from Illustrator, Inkscape, potrace and online converters.
 - **Not read yet:** clones (`<use>`), text, embedded images and CSS classes. laserlint stops with the Inkscape fix: Edit → Clone → Unlink Clone, or Path → Object to Path.
 - **Limits:** files up to 25 MB and 200,000 elements, so a hostile file can't hang it.
 
@@ -166,6 +166,6 @@ Issues, bug reports and sample SVGs are very welcome. Outside pull requests need
 
 Please report vulnerabilities privately, as described in [SECURITY.md](SECURITY.md).
 
-## Licence
+## License
 
-laserlint is released under the [MIT Licence](LICENSE). The Kinglet name, logo and mascot aren't covered by it; see [TRADEMARKS.md](TRADEMARKS.md).
+laserlint is released under the [MIT License](LICENSE). The Kinglet name, logo and mascot aren't covered by it; see [TRADEMARKS.md](TRADEMARKS.md).

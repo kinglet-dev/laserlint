@@ -40,9 +40,9 @@ func (c Check) Run(in check.Input, s check.Settings) ([]check.Finding, error) {
 	f := check.Finding{
 		Check:    c.ID(),
 		Severity: check.Info,
-		Message: fmt.Sprintf("%.1f%% of scored line is within %.2f mm of other line, centre to centre (limit %g%%); nearest %.2f mm",
+		Message: fmt.Sprintf("%.1f%% of scored line is within %.2f mm of other line, center to center (limit %g%%); nearest %.2f mm",
 			percent, minDist, 100*s.MaxClose, r.Spots[0].Distance),
-		Fix: fmt.Sprintf("Space lines at least %.2f mm apart, centre to centre, or remove fine detail; blunt or shorten very sharp points.", minDist),
+		Fix: fmt.Sprintf("Space lines at least %.2f mm apart, center to center, or remove fine detail; blunt or shorten very sharp points.", minDist),
 	}
 	if percent >= 100*s.WarnClose {
 		f.Severity = check.Warning
