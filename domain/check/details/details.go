@@ -67,7 +67,7 @@ func shapes(n int, detail float64) string {
 func centres(circles []enclose.Circle) []geom.Point {
 	points := make([]geom.Point, len(circles))
 	for i, c := range circles {
-		points[i] = c.Centre
+		points[i] = c.Center
 	}
 	return check.Places(points)
 }
