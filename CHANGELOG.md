@@ -2,6 +2,12 @@
 
 All notable changes to laserlint. Versions follow [Semantic Versioning](https://semver.org/): within a major version, flags, exit codes and the JSON report only change in backward-compatible ways.
 
+## Unreleased
+
+### Added
+
+- A WebAssembly copy of laserlint for web browsers, `laserlint_<version>.wasm`, published with each release alongside the `wasm_exec.js` that runs it and Go's license for that file. It reads the design from standard input, like `laserlint -`, and gives exactly the same report and exit status as the native program; a new end-to-end test checks this on every change.
+
 ## 0.1.3 (2026-10-11)
 
 ### Changed

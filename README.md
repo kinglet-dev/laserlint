@@ -79,6 +79,8 @@ The programs aren't signed with an Apple or Microsoft certificate yet. On a Mac,
 
 **From source:** with [Go](https://go.dev/dl/) 1.27 or later, run `go install github.com/kinglet-dev/laserlint/cmd/laserlint@latest`.
 
+**For web browsers:** each release also has `laserlint_<version>.wasm`, the same program built for WebAssembly, with the `laserlint_<version>_wasm_exec.js` it needs to run (from the Go version that built it, under Go's BSD-3-Clause license: `laserlint_<version>_wasm_exec_LICENSE.txt`). It reads the design from standard input, like `laserlint -`, and gives the same report and exit status.
+
 ## Usage
 
 ```text
@@ -144,6 +146,7 @@ cat coaster.svg | laserlint -
 ## Compatibility
 
 - **Systems:** Windows, macOS and Linux, on 64-bit Intel/AMD (`amd64`) and Arm (`arm64`). Tested on all three in CI.
+- **Web browsers:** the WebAssembly copy (`js/wasm`) runs in current browsers and in Node.js; CI checks that it gives exactly the same output as the native program.
 - **SVG:** `path` (all commands, including arcs), `rect`, `circle`, `ellipse`, `line`, `polyline`, `polygon` and groups, with transforms, `viewBox`, sizes in any unit, and colors from attributes or the `style` attribute. Checked against files from Illustrator, Inkscape, potrace and online converters.
 - **Not read yet:** clones (`<use>`), text, embedded images and CSS classes. laserlint stops with the Inkscape fix: Edit → Clone → Unlink Clone, or Path → Object to Path.
 - **Limits:** files up to 25 MB and 200,000 elements, so a hostile file can't hang it.
